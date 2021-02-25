@@ -97,7 +97,8 @@ start:
     VDU VDU_Palette,7,16,64,255,255 ; set colours 1-9 to a rainbow palette
     VDU VDU_Palette,8,16,64,128,255 ; set colours 1-9 to a rainbow palette
     VDU VDU_Palette,9,16,64,64,255  ; set colours 1-9 to a rainbow palette
-    VDU VDU_Palette,15,16,255,255,255  ; set colours 15 to white
+
+    VDU VDU_Palette,15,16,255,255,255   ; set colour 15 to white
 
     VDU VDU_TextColour,1    ; select text colour 1
 
