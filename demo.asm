@@ -13,6 +13,7 @@ VDU_Mode            = 22
 
 ; VDU macro, can accept upto 6 parameters
 VDU:    macro
+        nolist
         if NARG=1           ; if macro is passed 1 parameter
             MOV R0,#\1      ; move parameter 1 into R0
             SWI OS_WriteC   ; write it to the display
@@ -67,6 +68,7 @@ VDU:    macro
             MOV R0,#\6      ; move parameter 6 into R0
             SWI OS_WriteC   ; write it to the display
         endif
+        list
         endm
 
 ; start program for $8000 in memory
