@@ -114,6 +114,8 @@ start:
     SWI OS_WriteC   ; write it to the display
     SWI OS_NewLine  ; write a newline to the display
 
+    VDU VDU_TextColour,2    ; select text colour 2
+
     SWI OS_WriteS       ; write the following string to the display
     dc.b "Hello World!"
     dc.b 0
