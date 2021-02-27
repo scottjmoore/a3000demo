@@ -4,6 +4,7 @@
 .set OS_NewLine,0x03
 .set OS_Byte,0x06
 .set OS_Exit,0x11
+.set OS_ReadVduVariables,0x31
 
 ; VDU function values
 .set VDU_TextColour,17
@@ -55,18 +56,18 @@ stack:
 start:
     ADR SP,stack       ; load stack pointer with our stack address
 
-    VDU VDU_Mode,20,-1,-1,-1,-1     ; change to mode 20 (640x512 16 colours)
+    VDU VDU_Mode,9,-1,-1,-1,-1     ; change to mode 20 (640x512 16 colours)
     VDU VDU_Palette,0,16,64,64,64   ; set background colour to dark grey
     VDU VDU_Palette,0,24,64,64,64   ; set border colour to dark grey
-    VDU VDU_Palette,1,16,255,64,64  ; set colours 1-9 to a rainbow palette
-    VDU VDU_Palette,2,16,255,128,64 ; set colours 1-9 to a rainbow palette
-    VDU VDU_Palette,3,16,255,255,64 ; set colours 1-9 to a rainbow palette
-    VDU VDU_Palette,4,16,128,255,64 ; set colours 1-9 to a rainbow palette
-    VDU VDU_Palette,5,16,64,255,64  ; set colours 1-9 to a rainbow palette
-    VDU VDU_Palette,6,16,64,255,128 ; set colours 1-9 to a rainbow palette
-    VDU VDU_Palette,7,16,64,255,255 ; set colours 1-9 to a rainbow palette
-    VDU VDU_Palette,8,16,64,128,255 ; set colours 1-9 to a rainbow palette
-    VDU VDU_Palette,9,16,64,64,255  ; set colours 1-9 to a rainbow palette
+    VDU VDU_Palette,1,16,255,0,0  ; set colours 1-9 to a rainbow palette
+    VDU VDU_Palette,2,16,255,128,0 ; set colours 1-9 to a rainbow palette
+    VDU VDU_Palette,3,16,255,255,0 ; set colours 1-9 to a rainbow palette
+    VDU VDU_Palette,4,16,128,255,0 ; set colours 1-9 to a rainbow palette
+    VDU VDU_Palette,5,16,0,255,0  ; set colours 1-9 to a rainbow palette
+    VDU VDU_Palette,6,16,0,255,128 ; set colours 1-9 to a rainbow palette
+    VDU VDU_Palette,7,16,0,255,255 ; set colours 1-9 to a rainbow palette
+    VDU VDU_Palette,8,16,0,128,255 ; set colours 1-9 to a rainbow palette
+    VDU VDU_Palette,9,16,0,0,255  ; set colours 1-9 to a rainbow palette
 
     VDU VDU_Palette,15,16,255,255,255   ; set colour 15 to white
 
@@ -119,9 +120,60 @@ start:
 
     SWI OS_NewLine  ; write a newline to the display
 
+    VDU 19,0,24,0,0,255
+    ADRL R0,vdu_variables_screen_start
+    ADRL R1,buffer
+    SWI OS_ReadVduVariables
+
+    MOV R3,#320
+    MOV R4,#40
+    LDR R5,[R1]
+    MLA R12,R3,R4,R5
+
+    MOV R0,#0x12340000
+    EOR R0,R0,#0x5600
+    EOR R0,R0,#0x0078
+
+    MOV R11,#128
+loop:
+    MOV R1,R0
+    MOV R2,R0
+    MOV R3,R0
+    MOV R4,R0
+    MOV R5,R0
+    MOV R6,R0
+    MOV R7,R0
+
+    STMIA R12!, {R0-R7}
+    STMIA R12!, {R0-R7}
+    STMIA R12!, {R0-R7}
+    STMIA R12!, {R0-R7}
+    STMIA R12!, {R0-R7}
+    ;STMIA R12!, {R0-R7}
+    ;STMIA R12!, {R0-R7}
+    ;STMIA R12!, {R0-R7}
+    ;STMIA R12!, {R0-R7}
+    ;STMIA R12!, {R0-R7}
+
+    MOV R0,R0,ROR #4
+
+    SUBS R11,R11,#1
+    BNE loop
+    VDU 19,0,24,64,64,64
+
 exit:
     VDU VDU_TextColour,15,-1,-1,-1,-1
     mov r0,#0x12340000
     add r0,r0,#0x00005678
     SWI OS_Exit     ; return to RISC OS
+
+vdu_variables_screen_start:
+    .4byte 0x00000095       ; display memory start address
+    .4byte 0xffffffff
+
+buffer:
+    .4byte 0x00000000
+    .4byte 0x00000000
+    .4byte 0x00000000
+    .4byte 0x00000000
 
