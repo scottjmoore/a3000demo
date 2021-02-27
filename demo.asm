@@ -12,48 +12,48 @@
 .set VDU_Mode,22
 
 ; VDU macro, can accept upto 6 parameters
-    .macro VDU v1,v2,v3,v4,v5,v6
-        ;.nolist
-        .if \v1<>-1           ; if macro is passed 1 parameter
-            MOV R0,#\v1      ; move parameter 1 into R0
-            SWI OS_WriteC   ; write it to the display
-        .endif
-        .if \v2<>-1           ; if macro is passed 2 parameters
-            MOV R0,#\v2      ; move parameter 2 into R0
-            SWI OS_WriteC   ; write it to the display
-        .endif
-        .if \v3<>-1           ; if macro is passed 3 parameters
-            MOV R0,#\v3      ; move parameter 3 into R0
-            SWI OS_WriteC   ; write it to the display
-        .endif
-        .if \v4<>-1           ; if macro is passed 4 parameters
-            MOV R0,#\v4      ; move parameter 4 into R0
-            SWI OS_WriteC   ; write it to the display
-        .endif
-        .if \v5<>-1           ; if macro is passed 5 parameters
-            MOV R0,#\v5      ; move parameter 5 into R0
-            SWI OS_WriteC   ; write it to the display
-        .endif
-        .if \v6<>-1           ; if macro is passed 6 parameters
-            MOV R0,#\v6      ; move parameter 6 into R0
-            SWI OS_WriteC   ; write it to the display
-        .endif
-        ;.list
-    .endm
+.macro VDU v1,v2,v3,v4,v5,v6
+    .nolist
+    .if \v1<>-1           ; if macro is passed 1 parameter
+        MOV R0,#\v1      ; move parameter 1 into R0
+        SWI OS_WriteC   ; write it to the display
+    .endif
+    .if \v2<>-1           ; if macro is passed 2 parameters
+        MOV R0,#\v2      ; move parameter 2 into R0
+        SWI OS_WriteC   ; write it to the display
+    .endif
+    .if \v3<>-1           ; if macro is passed 3 parameters
+        MOV R0,#\v3      ; move parameter 3 into R0
+        SWI OS_WriteC   ; write it to the display
+    .endif
+    .if \v4<>-1           ; if macro is passed 4 parameters
+        MOV R0,#\v4      ; move parameter 4 into R0
+        SWI OS_WriteC   ; write it to the display
+    .endif
+    .if \v5<>-1           ; if macro is passed 5 parameters
+        MOV R0,#\v5      ; move parameter 5 into R0
+        SWI OS_WriteC   ; write it to the display
+    .endif
+    .if \v6<>-1           ; if macro is passed 6 parameters
+        MOV R0,#\v6      ; move parameter 6 into R0
+        SWI OS_WriteC   ; write it to the display
+    .endif
+    .list
+.endm
 
 ; start program for $8000 in memory
-    .org 0x00008000
+.org 0x00008000
 
 ; jump to start of our code
     B start
 
 ; reserve 256 bytes for a stack
-    .space 256
+.space 256
 stack:
 
 ; start of our code
 start:
-    ADRL SP,stack       ; load stack pointer with our stack address
+    ADR SP,stack       ; load stack pointer with our stack address
 
     VDU VDU_Mode,20,-1,-1,-1,-1     ; change to mode 20 (640x512 16 colours)
     VDU VDU_Palette,0,16,64,64,64   ; set background colour to dark grey
@@ -121,6 +121,7 @@ start:
 
 exit:
     VDU VDU_TextColour,15,-1,-1,-1,-1
-    mov r0,#0xff
+    mov r0,#0x12340000
+    add r0,r0,#0x00005678
     SWI OS_Exit     ; return to RISC OS
 
