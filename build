@@ -1,3 +1,3 @@
 #!/bin/sh
 
-vasmarm_std demo.asm -a2 -opt-ldrpc -opt-adr -chklabels -nocase -L demo.lst -Fbin -o ~/Workspace/github.com/scottjmoore/arculator/hostfs/Demo/demo,ff8
+vasmarm_std demo.asm -a2 -m2 -opt-ldrpc -opt-adr -chklabels -nocase -L demo.lst -Fbin -o ~/Workspace/github.com/scottjmoore/arculator/hostfs/Demo/demo,ff8
