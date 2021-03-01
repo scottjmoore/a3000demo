@@ -105,7 +105,7 @@ main_loop:
     MOV R9,#200
 reset_sprite_positions:
     STR R0,[R2,#4]
-    ADD R2,R2,#8
+    ADD R2,R2,#16
     SUBS R9,R9,#1
     BNE reset_sprite_positions
 
@@ -213,11 +213,9 @@ display_list_loop:
     LDR R7,[R0],#4
     STR R0,[R1,#16]
     CMP R6,#0
-    BEQ skip_sprite
+    BEQ skip_sprite_1
 
     ADD R12,R12,R7
-
-    MOV R2,#0xff
 
     LDR R0,[R6],#4
     MOV R1,R0,LSR #24
@@ -275,7 +273,75 @@ display_list_loop:
     ANDS R1,R1,#0xff
     STRNEB R1,[R12, #12]
         
-skip_sprite:
+skip_sprite_1:
+    MOV R12,R8
+    ADRL R1,buffer
+    LDR R0,[R1,#16]
+    LDR R6,[R0],#4
+    LDR R7,[R0],#4
+    STR R0,[R1,#16]
+    CMP R6,#0
+    BEQ skip_sprite_2
+
+    ADD R12,R12,R7
+
+    LDR R0,[R6],#4
+    MOV R1,R0,LSR #24
+    CMP R1,#0
+    STRNEB R1,[R12, #3]
+    MOV R1,R0,LSR #16
+    ANDS R1,R1,#0xff
+    STRNEB R1,[R12, #2]
+    MOV R1,R0,LSR #8
+    ANDS R1,R1,#0xff
+    STRNEB R1,[R12, #1]
+    MOV R1,R0
+    ANDS R1,R1,#0xff
+    STRNEB R1,[R12, #0]
+        
+    LDR R0,[R6],#4
+    MOV R1,R0,LSR #24
+    CMP R1,#0
+    STRNEB R1,[R12, #7]
+    MOV R1,R0,LSR #16
+    ANDS R1,R1,#0xff
+    STRNEB R1,[R12, #6]
+    MOV R1,R0,LSR #8
+    ANDS R1,R1,#0xff
+    STRNEB R1,[R12, #5]
+    MOV R1,R0
+    ANDS R1,R1,#0xff
+    STRNEB R1,[R12, #4]
+        
+    LDR R0,[R6],#4
+    MOV R1,R0,LSR #24
+    CMP R1,#0
+    STRNEB R1,[R12, #11]
+    MOV R1,R0,LSR #16
+    ANDS R1,R1,#0xff
+    STRNEB R1,[R12, #10]
+    MOV R1,R0,LSR #8
+    ANDS R1,R1,#0xff
+    STRNEB R1,[R12, #9]
+    MOV R1,R0
+    ANDS R1,R1,#0xff
+    STRNEB R1,[R12, #8]
+        
+    LDR R0,[R6],#4
+    MOV R1,R0,LSR #24
+    CMP R1,#0
+    STRNEB R1,[R12, #15]
+    MOV R1,R0,LSR #16
+    ANDS R1,R1,#0xff
+    STRNEB R1,[R12, #14]
+    MOV R1,R0,LSR #8
+    ANDS R1,R1,#0xff
+    STRNEB R1,[R12, #13]
+    MOV R1,R0
+    ANDS R1,R1,#0xff
+    STRNEB R1,[R12, #12]
+
+skip_sprite_2:
     MOV R12,R8
     ADD R12,R12,#320
     MOV R0,#display_list_end
@@ -632,162 +698,202 @@ display_list_end:
     .space 40*256
 
 sprite_list:
-    .4byte redball + (0 << 4), 160-8
-    .4byte redball + (1 << 4), 160-8
-    .4byte redball + (2 << 4), 160-8
-    .4byte redball + (3 << 4), 160-8
-    .4byte redball + (4 << 4), 160-8
-    .4byte redball + (5 << 4), 160-8
-    .4byte redball + (6 << 4), 160-8
-    .4byte redball + (7 << 4), 160-8
-    .4byte redball + (8 << 4), 160-8
-    .4byte redball + (9 << 4), 160-8
-    .4byte redball + (10 << 4), 160-8
-    .4byte redball + (11 << 4), 160-8
-    .4byte redball + (12 << 4), 160-8
-    .4byte redball + (13 << 4), 160-8
-    .4byte redball + (14 << 4), 160-8
-    .4byte redball + (15 << 4), 160-8
-    .4byte 0x00000000, 0
-    .4byte 0x00000000, 0
-    .4byte 0x00000000, 0
-    .4byte 0x00000000, 0
-    .4byte greenball + (0 << 4), 160-8
-    .4byte greenball + (1 << 4), 160-8
-    .4byte greenball + (2 << 4), 160-8
-    .4byte greenball + (3 << 4), 160-8
-    .4byte greenball + (4 << 4), 160-8
-    .4byte greenball + (5 << 4), 160-8
-    .4byte greenball + (6 << 4), 160-8
-    .4byte greenball + (7 << 4), 160-8
-    .4byte greenball + (8 << 4), 160-8
-    .4byte greenball + (9 << 4), 160-8
-    .4byte greenball + (10 << 4), 160-8
-    .4byte greenball + (11 << 4), 160-8
-    .4byte greenball + (12 << 4), 160-8
-    .4byte greenball + (13 << 4), 160-8
-    .4byte greenball + (14 << 4), 160-8
-    .4byte greenball + (15 << 4), 160-8
-    .4byte 0x00000000, 0
-    .4byte 0x00000000, 0
-    .4byte 0x00000000, 0
-    .4byte 0x00000000, 0
-    .4byte blueball + (0 << 4), 160-8
-    .4byte blueball + (1 << 4), 160-8
-    .4byte blueball + (2 << 4), 160-8
-    .4byte blueball + (3 << 4), 160-8
-    .4byte blueball + (4 << 4), 160-8
-    .4byte blueball + (5 << 4), 160-8
-    .4byte blueball + (6 << 4), 160-8
-    .4byte blueball + (7 << 4), 160-8
-    .4byte blueball + (8 << 4), 160-8
-    .4byte blueball + (9 << 4), 160-8
-    .4byte blueball + (10 << 4), 160-8
-    .4byte blueball + (11 << 4), 160-8
-    .4byte blueball + (12 << 4), 160-8
-    .4byte blueball + (13 << 4), 160-8
-    .4byte blueball + (14 << 4), 160-8
-    .4byte blueball + (15 << 4), 160-8
-    .4byte 0x00000000, 0
-    .4byte 0x00000000, 0
-    .4byte 0x00000000, 0
-    .4byte 0x00000000, 0
-   .4byte redball + (0 << 4), 160-8
-    .4byte redball + (1 << 4), 160-8
-    .4byte redball + (2 << 4), 160-8
-    .4byte redball + (3 << 4), 160-8
-    .4byte redball + (4 << 4), 160-8
-    .4byte redball + (5 << 4), 160-8
-    .4byte redball + (6 << 4), 160-8
-    .4byte redball + (7 << 4), 160-8
-    .4byte redball + (8 << 4), 160-8
-    .4byte redball + (9 << 4), 160-8
-    .4byte redball + (10 << 4), 160-8
-    .4byte redball + (11 << 4), 160-8
-    .4byte redball + (12 << 4), 160-8
-    .4byte redball + (13 << 4), 160-8
-    .4byte redball + (14 << 4), 160-8
-    .4byte redball + (15 << 4), 160-8
-    .4byte 0x00000000, 0
-    .4byte 0x00000000, 0
-    .4byte 0x00000000, 0
-    .4byte 0x00000000, 0
-    .4byte greenball + (0 << 4), 160-8
-    .4byte greenball + (1 << 4), 160-8
-    .4byte greenball + (2 << 4), 160-8
-    .4byte greenball + (3 << 4), 160-8
-    .4byte greenball + (4 << 4), 160-8
-    .4byte greenball + (5 << 4), 160-8
-    .4byte greenball + (6 << 4), 160-8
-    .4byte greenball + (7 << 4), 160-8
-    .4byte greenball + (8 << 4), 160-8
-    .4byte greenball + (9 << 4), 160-8
-    .4byte greenball + (10 << 4), 160-8
-    .4byte greenball + (11 << 4), 160-8
-    .4byte greenball + (12 << 4), 160-8
-    .4byte greenball + (13 << 4), 160-8
-    .4byte greenball + (14 << 4), 160-8
-    .4byte greenball + (15 << 4), 160-8
-    .4byte 0x00000000, 0
-    .4byte 0x00000000, 0
-    .4byte 0x00000000, 0
-    .4byte 0x00000000, 0
-    .4byte blueball + (0 << 4), 160-8
-    .4byte blueball + (1 << 4), 160-8
-    .4byte blueball + (2 << 4), 160-8
-    .4byte blueball + (3 << 4), 160-8
-    .4byte blueball + (4 << 4), 160-8
-    .4byte blueball + (5 << 4), 160-8
-    .4byte blueball + (6 << 4), 160-8
-    .4byte blueball + (7 << 4), 160-8
-    .4byte blueball + (8 << 4), 160-8
-    .4byte blueball + (9 << 4), 160-8
-    .4byte blueball + (10 << 4), 160-8
-    .4byte blueball + (11 << 4), 160-8
-    .4byte blueball + (12 << 4), 160-8
-    .4byte blueball + (13 << 4), 160-8
-    .4byte blueball + (14 << 4), 160-8
-    .4byte blueball + (15 << 4), 160-8
-    .4byte 0x00000000, 0
-    .4byte 0x00000000, 0
-    .4byte 0x00000000, 0
-    .4byte 0x00000000, 0
-   .4byte redball + (0 << 4), 160-8
-    .4byte redball + (1 << 4), 160-8
-    .4byte redball + (2 << 4), 160-8
-    .4byte redball + (3 << 4), 160-8
-    .4byte redball + (4 << 4), 160-8
-    .4byte redball + (5 << 4), 160-8
-    .4byte redball + (6 << 4), 160-8
-    .4byte redball + (7 << 4), 160-8
-    .4byte redball + (8 << 4), 160-8
-    .4byte redball + (9 << 4), 160-8
-    .4byte redball + (10 << 4), 160-8
-    .4byte redball + (11 << 4), 160-8
-    .4byte redball + (12 << 4), 160-8
-    .4byte redball + (13 << 4), 160-8
-    .4byte redball + (14 << 4), 160-8
-    .4byte redball + (15 << 4), 160-8
-    .4byte 0x00000000, 0
-    .4byte 0x00000000, 0
-    .4byte 0x00000000, 0
-    .4byte 0x00000000, 0
-    .4byte greenball + (0 << 4), 160-8
-    .4byte greenball + (1 << 4), 160-8
-    .4byte greenball + (2 << 4), 160-8
-    .4byte greenball + (3 << 4), 160-8
-    .4byte greenball + (4 << 4), 160-8
-    .4byte greenball + (5 << 4), 160-8
-    .4byte greenball + (6 << 4), 160-8
-    .4byte greenball + (7 << 4), 160-8
-    .4byte greenball + (8 << 4), 160-8
-    .4byte greenball + (9 << 4), 160-8
-    .4byte greenball + (10 << 4), 160-8
-    .4byte greenball + (11 << 4), 160-8
-    .4byte greenball + (12 << 4), 160-8
-    .4byte greenball + (13 << 4), 160-8
-    .4byte greenball + (14 << 4), 160-8
-    .4byte greenball + (15 << 4), 160-8
+    .4byte redball + (0 << 4), 0, 0x00000000, 0
+    .4byte redball + (1 << 4), 0, 0x00000000, 0
+    .4byte redball + (2 << 4), 0, 0x00000000, 0
+    .4byte redball + (3 << 4), 0, 0x00000000, 0
+    .4byte redball + (4 << 4), 0, 0x00000000, 0
+    .4byte redball + (5 << 4), 0, 0x00000000, 0
+    .4byte redball + (6 << 4), 0, 0x00000000, 0
+    .4byte redball + (7 << 4), 0, 0x00000000, 0
+    .4byte redball + (8 << 4), 0, 0x00000000, 0
+    .4byte redball + (9 << 4), 0, 0x00000000, 0
+    .4byte redball + (10 << 4), 0, 0x00000000, 0
+    .4byte redball + (11 << 4), 0, 0x00000000, 0
+    .4byte redball + (12 << 4), 0, 0x00000000, 0
+    .4byte redball + (13 << 4), 0, 0x00000000, 0
+    .4byte redball + (14 << 4), 0, 0x00000000, 0
+    .4byte redball + (15 << 4), 0, 0x00000000, 0
+    .4byte 0x00000000, 0, 0x00000000, 0
+    .4byte 0x00000000, 0, 0x00000000, 0
+    .4byte 0x00000000, 0, 0x00000000, 0
+    .4byte 0x00000000, 0, 0x00000000, 0
+    .4byte greenball + (0 << 4), 0, 0x00000000, 0
+    .4byte greenball + (1 << 4), 0, 0x00000000, 0
+    .4byte greenball + (2 << 4), 0, 0x00000000, 0
+    .4byte greenball + (3 << 4), 0, 0x00000000, 0
+    .4byte greenball + (4 << 4), 0, 0x00000000, 0
+    .4byte greenball + (5 << 4), 0, 0x00000000, 0
+    .4byte greenball + (6 << 4), 0, 0x00000000, 0
+    .4byte greenball + (7 << 4), 0, 0x00000000, 0
+    .4byte greenball + (8 << 4), 0, 0x00000000, 0
+    .4byte greenball + (9 << 4), 0, 0x00000000, 0
+    .4byte greenball + (10 << 4), 0, redball + (0 << 4), 160-8
+    .4byte greenball + (11 << 4), 0, redball + (1 << 4), 160-8
+    .4byte greenball + (12 << 4), 0, redball + (2 << 4), 160-8
+    .4byte greenball + (13 << 4), 0, redball + (3 << 4), 160-8
+    .4byte greenball + (14 << 4), 0, redball + (4 << 4), 160-8
+    .4byte greenball + (15 << 4), 0, redball + (5 << 4), 160-8
+    .4byte 0x00000000, 0, redball + (6 << 4), 160-8
+    .4byte 0x00000000, 0, redball + (7 << 4), 160-8
+    .4byte 0x00000000, 0, redball + (8 << 4), 160-8
+    .4byte 0x00000000, 0, redball + (9 << 4), 160-8
+    .4byte blueball + (0 << 4), 0, redball + (10 << 4), 160-8
+    .4byte blueball + (1 << 4), 0, redball + (11 << 4), 160-8
+    .4byte blueball + (2 << 4), 0, redball + (12 << 4), 160-8
+    .4byte blueball + (3 << 4), 0, redball + (13 << 4), 160-8
+    .4byte blueball + (4 << 4), 0, redball + (14 << 4), 160-8
+    .4byte blueball + (5 << 4), 0, redball + (15 << 4), 160-8
+    .4byte blueball + (6 << 4), 0, 0x00000000, 0
+    .4byte blueball + (7 << 4), 0, 0x00000000, 0
+    .4byte blueball + (8 << 4), 0, 0x00000000, 0
+    .4byte blueball + (9 << 4), 0, 0x00000000, 0
+    .4byte blueball + (10 << 4), 0, 0x00000000, 0
+    .4byte blueball + (11 << 4), 0, 0x00000000, 0
+    .4byte blueball + (12 << 4), 0, 0x00000000, 0
+    .4byte blueball + (13 << 4), 0, 0x00000000, 0
+    .4byte blueball + (14 << 4), 0, 0x00000000, 0
+    .4byte blueball + (15 << 4), 0, 0x00000000, 0
+    .4byte 0x00000000, 0, 0x00000000, 0
+    .4byte 0x00000000, 0, 0x00000000, 0
+    .4byte 0x00000000, 0, 0x00000000, 0
+    .4byte 0x00000000, 0, 0x00000000, 0
+    .4byte redball + (0 << 4), 0, 0x00000000, 0
+    .4byte redball + (1 << 4), 0, 0x00000000, 0
+    .4byte redball + (2 << 4), 0, 0x00000000, 0
+    .4byte redball + (3 << 4), 0, 0x00000000, 0
+    .4byte redball + (4 << 4), 0, 0x00000000, 0
+    .4byte redball + (5 << 4), 0, 0x00000000, 0
+    .4byte redball + (6 << 4), 0, 0x00000000, 0
+    .4byte redball + (7 << 4), 0, 0x00000000, 0
+    .4byte redball + (8 << 4), 0, 0x00000000, 0
+    .4byte redball + (9 << 4), 0, 0x00000000, 0
+    .4byte redball + (10 << 4), 0, 0x00000000, 0
+    .4byte redball + (11 << 4), 0, 0x00000000, 0
+    .4byte redball + (12 << 4), 0, 0x00000000, 0
+    .4byte redball + (13 << 4), 0, 0x00000000, 0
+    .4byte redball + (14 << 4), 0, 0x00000000, 0
+    .4byte redball + (15 << 4), 0, 0x00000000, 0
+    .4byte 0x00000000, 0, 0x00000000, 0
+    .4byte 0x00000000, 0, 0x00000000, 0
+    .4byte 0x00000000, 0, 0x00000000, 0
+    .4byte 0x00000000, 0, 0x00000000, 0
+    .4byte greenball + (0 << 4), 0, 0x00000000, 0
+    .4byte greenball + (1 << 4), 0, 0x00000000, 0
+    .4byte greenball + (2 << 4), 0, 0x00000000, 0
+    .4byte greenball + (3 << 4), 0, 0x00000000, 0
+    .4byte greenball + (4 << 4), 0, 0x00000000, 0
+    .4byte greenball + (5 << 4), 0, 0x00000000, 0
+    .4byte greenball + (6 << 4), 0, 0x00000000, 0
+    .4byte greenball + (7 << 4), 0, 0x00000000, 0
+    .4byte greenball + (8 << 4), 0, 0x00000000, 0
+    .4byte greenball + (9 << 4), 0, 0x00000000, 0
+    .4byte greenball + (10 << 4), 0, greenball + (0 << 4), 0
+    .4byte greenball + (11 << 4), 0, greenball + (1 << 4), 0
+    .4byte greenball + (12 << 4), 0, greenball + (2 << 4), 0
+    .4byte greenball + (13 << 4), 0, greenball + (3 << 4), 0
+    .4byte greenball + (14 << 4), 0, greenball + (4 << 4), 0
+    .4byte greenball + (15 << 4), 0, greenball + (5 << 4), 0
+    .4byte 0x00000000, 0, greenball + (6 << 4), 0
+    .4byte 0x00000000, 0, greenball + (7 << 4), 0
+    .4byte 0x00000000, 0, greenball + (8 << 4), 0
+    .4byte 0x00000000, 0, greenball + (9 << 4), 0
+    .4byte blueball + (0 << 4), 0, greenball + (10 << 4), 0
+    .4byte blueball + (1 << 4), 0, greenball + (11 << 4), 0
+    .4byte blueball + (2 << 4), 0, greenball + (12 << 4), 0
+    .4byte blueball + (3 << 4), 0, greenball + (13 << 4), 0
+    .4byte blueball + (4 << 4), 0, greenball + (14 << 4), 0
+    .4byte blueball + (5 << 4), 0, greenball + (15 << 4), 0
+    .4byte blueball + (6 << 4), 0, 0x00000000, 0
+    .4byte blueball + (7 << 4), 0, 0x00000000, 0
+    .4byte blueball + (8 << 4), 0, 0x00000000, 0
+    .4byte blueball + (9 << 4), 0, 0x00000000, 0
+    .4byte blueball + (10 << 4), 0, 0x00000000, 0
+    .4byte blueball + (11 << 4), 0, 0x00000000, 0
+    .4byte blueball + (12 << 4), 0, 0x00000000, 0
+    .4byte blueball + (13 << 4), 0, 0x00000000, 0
+    .4byte blueball + (14 << 4), 0, 0x00000000, 0
+    .4byte blueball + (15 << 4), 0, 0x00000000, 0
+    .4byte 0x00000000, 0, 0x00000000, 0
+    .4byte 0x00000000, 0, 0x00000000, 0
+    .4byte 0x00000000, 0, 0x00000000, 0
+    .4byte 0x00000000, 0, 0x00000000, 0
+    .4byte redball + (0 << 4), 0, 0x00000000, 0
+    .4byte redball + (1 << 4), 0, 0x00000000, 0
+    .4byte redball + (2 << 4), 0, 0x00000000, 0
+    .4byte redball + (3 << 4), 0, 0x00000000, 0
+    .4byte redball + (4 << 4), 0, 0x00000000, 0
+    .4byte redball + (5 << 4), 0, 0x00000000, 0
+    .4byte redball + (6 << 4), 0, 0x00000000, 0
+    .4byte redball + (7 << 4), 0, 0x00000000, 0
+    .4byte redball + (8 << 4), 0, 0x00000000, 0
+    .4byte redball + (9 << 4), 0, 0x00000000, 0
+    .4byte redball + (10 << 4), 0, 0x00000000, 0
+    .4byte redball + (11 << 4), 0, 0x00000000, 0
+    .4byte redball + (12 << 4), 0, 0x00000000, 0
+    .4byte redball + (13 << 4), 0, 0x00000000, 0
+    .4byte redball + (14 << 4), 0, 0x00000000, 0
+    .4byte redball + (15 << 4), 0, 0x00000000, 0
+    .4byte 0x00000000, 0, 0x00000000, 0
+    .4byte 0x00000000, 0, 0x00000000, 0
+    .4byte 0x00000000, 0, 0x00000000, 0
+    .4byte 0x00000000, 0, 0x00000000, 0
+    .4byte greenball + (0 << 4), 0, 0x00000000, 0
+    .4byte greenball + (1 << 4), 0, 0x00000000, 0
+    .4byte greenball + (2 << 4), 0, 0x00000000, 0
+    .4byte greenball + (3 << 4), 0, 0x00000000, 0
+    .4byte greenball + (4 << 4), 0, 0x00000000, 0
+    .4byte greenball + (5 << 4), 0, 0x00000000, 0
+    .4byte greenball + (6 << 4), 0, 0x00000000, 0
+    .4byte greenball + (7 << 4), 0, 0x00000000, 0
+    .4byte greenball + (8 << 4), 0, 0x00000000, 0
+    .4byte greenball + (9 << 4), 0, 0x00000000, 0
+    .4byte greenball + (10 << 4), 0, blueball + (0 << 4), 160-8
+    .4byte greenball + (11 << 4), 0, blueball + (1 << 4), 160-8
+    .4byte greenball + (12 << 4), 0, blueball + (2 << 4), 160-8
+    .4byte greenball + (13 << 4), 0, blueball + (3 << 4), 160-8
+    .4byte greenball + (14 << 4), 0, blueball + (4 << 4), 160-8
+    .4byte greenball + (15 << 4), 0, blueball + (5 << 4), 160-8
+    .4byte 0x00000000, 0, blueball + (6 << 4), 160-8
+    .4byte 0x00000000, 0, blueball + (7 << 4), 160-8
+    .4byte 0x00000000, 0, blueball + (8 << 4), 160-8
+    .4byte 0x00000000, 0, blueball + (9 << 4), 160-8
+    .4byte blueball + (0 << 4), 0, blueball + (10 << 4), 160-8
+    .4byte blueball + (1 << 4), 0, blueball + (11 << 4), 160-8
+    .4byte blueball + (2 << 4), 0, blueball + (12 << 4), 160-8
+    .4byte blueball + (3 << 4), 0, blueball + (13 << 4), 160-8
+    .4byte blueball + (4 << 4), 0, blueball + (14 << 4), 160-8
+    .4byte blueball + (5 << 4), 0, blueball + (15 << 4), 160-8
+    .4byte blueball + (6 << 4), 0, 0x00000000, 0
+    .4byte blueball + (7 << 4), 0, 0x00000000, 0
+    .4byte blueball + (8 << 4), 0, 0x00000000, 0
+    .4byte blueball + (9 << 4), 0, 0x00000000, 0
+    .4byte blueball + (10 << 4), 0, 0x00000000, 0
+    .4byte blueball + (11 << 4), 0, 0x00000000, 0
+    .4byte blueball + (12 << 4), 0, 0x00000000, 0
+    .4byte blueball + (13 << 4), 0, 0x00000000, 0
+    .4byte blueball + (14 << 4), 0, 0x00000000, 0
+    .4byte blueball + (15 << 4), 0, 0x00000000, 0
+    .4byte 0x00000000, 0, 0x00000000, 0
+    .4byte 0x00000000, 0, 0x00000000, 0
+    .4byte 0x00000000, 0, 0x00000000, 0
+    .4byte 0x00000000, 0, 0x00000000, 0
+    .4byte redball + (0 << 4), 0, 0x00000000, 0
+    .4byte redball + (1 << 4), 0, 0x00000000, 0
+    .4byte redball + (2 << 4), 0, 0x00000000, 0
+    .4byte redball + (3 << 4), 0, 0x00000000, 0
+    .4byte redball + (4 << 4), 0, 0x00000000, 0
+    .4byte redball + (5 << 4), 0, 0x00000000, 0
+    .4byte redball + (6 << 4), 0, 0x00000000, 0
+    .4byte redball + (7 << 4), 0, 0x00000000, 0
+    .4byte redball + (8 << 4), 0, 0x00000000, 0
+    .4byte redball + (9 << 4), 0, 0x00000000, 0
+    .4byte redball + (10 << 4), 0, 0x00000000, 0
+    .4byte redball + (11 << 4), 0, 0x00000000, 0
+    .4byte redball + (12 << 4), 0, 0x00000000, 0
+    .4byte redball + (13 << 4), 0, 0x00000000, 0
+    .4byte redball + (14 << 4), 0, 0x00000000, 0
+    .4byte redball + (15 << 4), 0, 0x00000000, 0
     .space 256*8,0x00
 sprite_list_end:
 
