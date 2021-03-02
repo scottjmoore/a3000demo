@@ -14,7 +14,7 @@
 .set VDU_Misc,23
 
 ; VDU macro, can accept upto 6 parameters
-.macro VDU v1,v2,v3,v4,v5,v6,v7,v8,v9
+.macro VDU v1,v2,v3,v4,v5,v6,v7,v8,v9,v10
     .nolist
     .if \v1<>-1           ; if macro is passed 1 parameter
         MOV R0,#\v1      ; move parameter 1 into R0
@@ -52,6 +52,10 @@
         MOV R0,#\v9      ; move parameter 9 into R0
         SWI OS_WriteC   ; write it to the display
     .endif
+    .if \v10<>-1           ; if macro is passed 9 parameters
+        MOV R0,#\v10      ; move parameter 9 into R0
+        SWI OS_WriteC   ; write it to the display
+    .endif
     .list
 .endm
 
@@ -62,8 +66,8 @@
 main:
     ;ADRL SP,stack       ; load stack pointer with our stack address
 
-    VDU VDU_Mode,13,-1,-1,-1,-1,-1,-1,-1     ; change to mode 13 (320x256 256 colours) for A3000
-    VDU VDU_Misc,1,0,0,0,0,0,0,0,0
+    VDU VDU_Mode,13,-1,-1,-1,-1,-1,-1,-1,-1     ; change to mode 13 (320x256 256 colours) for A3000
+    VDU VDU_Misc,1,0,0,0,0,0,0,0,0,0
     ADRL R0,vdu_variables_screen_start
     ADRL R1,buffer
     SWI OS_ReadVduVariables
@@ -119,7 +123,7 @@ reset_sprite_positions:
     MOV R0,#19
     SWI OS_Byte
 
-    VDU 19,0,24,0,0,240,-1,-1,-1
+    ;VDU 19,0,24,0,0,240,-1,-1,-1
 
 display_list_loop:
     MOV R8,R12
@@ -258,8 +262,6 @@ skip_sprite_2:
     SUBS R9,R9,#1
     BNE display_list_loop
     
-    VDU 19,0,24,240,0,0,-1,-1,-1
-
     MOV R0,#129
     MOV R1,#112
     EOR R1,R1,#0xff
@@ -304,7 +306,7 @@ skip_sprite_2:
     STR R3,[R1,#16]
     STR R4,[R1,#20]
 
-    VDU 19,0,24,64,64,64,-1,-1,-1
+    ;VDU 19,0,24,0,0,0,-1,-1,-1
 
     B main_loop
 
