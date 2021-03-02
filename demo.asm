@@ -217,62 +217,11 @@ display_list_loop:
 
     ADD R12,R12,R7
 
-    LDR R0,[R6],#4
-    MOV R1,R0,LSR #24
-    CMP R1,#0
-    STRNEB R1,[R12, #3]
-    MOV R1,R0,LSR #16
-    ANDS R1,R1,#0xff
-    STRNEB R1,[R12, #2]
-    MOV R1,R0,LSR #8
-    ANDS R1,R1,#0xff
-    STRNEB R1,[R12, #1]
-    MOV R1,R0
-    ANDS R1,R1,#0xff
-    STRNEB R1,[R12, #0]
-        
-    LDR R0,[R6],#4
-    MOV R1,R0,LSR #24
-    CMP R1,#0
-    STRNEB R1,[R12, #7]
-    MOV R1,R0,LSR #16
-    ANDS R1,R1,#0xff
-    STRNEB R1,[R12, #6]
-    MOV R1,R0,LSR #8
-    ANDS R1,R1,#0xff
-    STRNEB R1,[R12, #5]
-    MOV R1,R0
-    ANDS R1,R1,#0xff
-    STRNEB R1,[R12, #4]
-        
-    LDR R0,[R6],#4
-    MOV R1,R0,LSR #24
-    CMP R1,#0
-    STRNEB R1,[R12, #11]
-    MOV R1,R0,LSR #16
-    ANDS R1,R1,#0xff
-    STRNEB R1,[R12, #10]
-    MOV R1,R0,LSR #8
-    ANDS R1,R1,#0xff
-    STRNEB R1,[R12, #9]
-    MOV R1,R0
-    ANDS R1,R1,#0xff
-    STRNEB R1,[R12, #8]
-        
-    LDR R0,[R6],#4
-    MOV R1,R0,LSR #24
-    CMP R1,#0
-    STRNEB R1,[R12, #15]
-    MOV R1,R0,LSR #16
-    ANDS R1,R1,#0xff
-    STRNEB R1,[R12, #14]
-    MOV R1,R0,LSR #8
-    ANDS R1,R1,#0xff
-    STRNEB R1,[R12, #13]
-    MOV R1,R0
-    ANDS R1,R1,#0xff
-    STRNEB R1,[R12, #12]
-        
+    TST R6,#0x80000000
+    EORNE R6,R6,#0x80000000
+    BLNE double_sprite
+    BLEQ single_sprite
+
 skip_sprite_1:
     MOV R12,R8
     ADRL R1,buffer
@@ -285,61 +234,10 @@ skip_sprite_1:
 
     ADD R12,R12,R7
 
-    LDR R0,[R6],#4
-    MOV R1,R0,LSR #24
-    CMP R1,#0
-    STRNEB R1,[R12, #3]
-    MOV R1,R0,LSR #16
-    ANDS R1,R1,#0xff
-    STRNEB R1,[R12, #2]
-    MOV R1,R0,LSR #8
-    ANDS R1,R1,#0xff
-    STRNEB R1,[R12, #1]
-    MOV R1,R0
-    ANDS R1,R1,#0xff
-    STRNEB R1,[R12, #0]
-        
-    LDR R0,[R6],#4
-    MOV R1,R0,LSR #24
-    CMP R1,#0
-    STRNEB R1,[R12, #7]
-    MOV R1,R0,LSR #16
-    ANDS R1,R1,#0xff
-    STRNEB R1,[R12, #6]
-    MOV R1,R0,LSR #8
-    ANDS R1,R1,#0xff
-    STRNEB R1,[R12, #5]
-    MOV R1,R0
-    ANDS R1,R1,#0xff
-    STRNEB R1,[R12, #4]
-        
-    LDR R0,[R6],#4
-    MOV R1,R0,LSR #24
-    CMP R1,#0
-    STRNEB R1,[R12, #11]
-    MOV R1,R0,LSR #16
-    ANDS R1,R1,#0xff
-    STRNEB R1,[R12, #10]
-    MOV R1,R0,LSR #8
-    ANDS R1,R1,#0xff
-    STRNEB R1,[R12, #9]
-    MOV R1,R0
-    ANDS R1,R1,#0xff
-    STRNEB R1,[R12, #8]
-        
-    LDR R0,[R6],#4
-    MOV R1,R0,LSR #24
-    CMP R1,#0
-    STRNEB R1,[R12, #15]
-    MOV R1,R0,LSR #16
-    ANDS R1,R1,#0xff
-    STRNEB R1,[R12, #14]
-    MOV R1,R0,LSR #8
-    ANDS R1,R1,#0xff
-    STRNEB R1,[R12, #13]
-    MOV R1,R0
-    ANDS R1,R1,#0xff
-    STRNEB R1,[R12, #12]
+    TST R6,#0x80000000
+    EORNE R6,R6,#0x80000000
+    BLNE double_sprite
+    BLEQ single_sprite
 
 skip_sprite_2:
     MOV R12,R8
@@ -411,6 +309,139 @@ skip_sprite_2:
 exit:
     MOV R0,#0
     SWI OS_Exit     ; return to RISC OS
+
+single_sprite:
+    LDR R0,[R6],#4
+    MOV R1,R0,LSR #24
+    CMP R1,#0
+    STRNEB R1,[R12, #3]
+    MOV R1,R0,LSR #16
+    ANDS R1,R1,#0xff
+    STRNEB R1,[R12, #2]
+    MOV R1,R0,LSR #8
+    ANDS R1,R1,#0xff
+    STRNEB R1,[R12, #1]
+    MOV R1,R0
+    ANDS R1,R1,#0xff
+    STRNEB R1,[R12, #0]
+        
+    LDR R0,[R6],#4
+    MOV R1,R0,LSR #24
+    CMP R1,#0
+    STRNEB R1,[R12, #7]
+    MOV R1,R0,LSR #16
+    ANDS R1,R1,#0xff
+    STRNEB R1,[R12, #6]
+    MOV R1,R0,LSR #8
+    ANDS R1,R1,#0xff
+    STRNEB R1,[R12, #5]
+    MOV R1,R0
+    ANDS R1,R1,#0xff
+    STRNEB R1,[R12, #4]
+        
+    LDR R0,[R6],#4
+    MOV R1,R0,LSR #24
+    CMP R1,#0
+    STRNEB R1,[R12, #11]
+    MOV R1,R0,LSR #16
+    ANDS R1,R1,#0xff
+    STRNEB R1,[R12, #10]
+    MOV R1,R0,LSR #8
+    ANDS R1,R1,#0xff
+    STRNEB R1,[R12, #9]
+    MOV R1,R0
+    ANDS R1,R1,#0xff
+    STRNEB R1,[R12, #8]
+        
+    LDR R0,[R6],#4
+    MOV R1,R0,LSR #24
+    CMP R1,#0
+    STRNEB R1,[R12, #15]
+    MOV R1,R0,LSR #16
+    ANDS R1,R1,#0xff
+    STRNEB R1,[R12, #14]
+    MOV R1,R0,LSR #8
+    ANDS R1,R1,#0xff
+    STRNEB R1,[R12, #13]
+    MOV R1,R0
+    ANDS R1,R1,#0xff
+    STRNEB R1,[R12, #12]
+    MOV PC,R14
+
+double_sprite:
+    LDR R0,[R6],#4
+    MOV R1,R0,LSR #24
+    CMP R1,#0
+    STRNEB R1,[R12, #7]
+    STRNEB R1,[R12, #6]
+    MOV R1,R0,LSR #16
+    ANDS R1,R1,#0xff
+    STRNEB R1,[R12, #5]
+    STRNEB R1,[R12, #4]
+    MOV R1,R0,LSR #8
+    ANDS R1,R1,#0xff
+    STRNEB R1,[R12, #3]
+    STRNEB R1,[R12, #2]
+    MOV R1,R0
+    ANDS R1,R1,#0xff
+    STRNEB R1,[R12, #1]
+    STRNEB R1,[R12, #0]
+        
+    LDR R0,[R6],#4
+    MOV R1,R0,LSR #24
+    CMP R1,#0
+    STRNEB R1,[R12, #15]
+    STRNEB R1,[R12, #14]
+    MOV R1,R0,LSR #16
+    ANDS R1,R1,#0xff
+    STRNEB R1,[R12, #13]
+    STRNEB R1,[R12, #12]
+    MOV R1,R0,LSR #8
+    ANDS R1,R1,#0xff
+    STRNEB R1,[R12, #11]
+    STRNEB R1,[R12, #10]
+    MOV R1,R0
+    ANDS R1,R1,#0xff
+    STRNEB R1,[R12, #9]
+    STRNEB R1,[R12, #8]
+        
+    LDR R0,[R6],#4
+    MOV R1,R0,LSR #24
+    CMP R1,#0
+    STRNEB R1,[R12, #23]
+    STRNEB R1,[R12, #22]
+    MOV R1,R0,LSR #16
+    ANDS R1,R1,#0xff
+    STRNEB R1,[R12, #21]
+    STRNEB R1,[R12, #20]
+    MOV R1,R0,LSR #8
+    ANDS R1,R1,#0xff
+    STRNEB R1,[R12, #19]
+    STRNEB R1,[R12, #18]
+    MOV R1,R0
+    ANDS R1,R1,#0xff
+    STRNEB R1,[R12, #17]
+    STRNEB R1,[R12, #16]
+        
+    LDR R0,[R6],#4
+    MOV R1,R0,LSR #24
+    CMP R1,#0
+    STRNEB R1,[R12, #31]
+    STRNEB R1,[R12, #30]
+    MOV R1,R0,LSR #16
+    ANDS R1,R1,#0xff
+    STRNEB R1,[R12, #29]
+    STRNEB R1,[R12, #28]
+    MOV R1,R0,LSR #8
+    ANDS R1,R1,#0xff
+    STRNEB R1,[R12, #27]
+    STRNEB R1,[R12, #26]
+    MOV R1,R0
+    ANDS R1,R1,#0xff
+    STRNEB R1,[R12, #25]
+    STRNEB R1,[R12, #24]
+    MOVS R1,#0xff
+    MOV PC,R14
 
 vdu_variables_screen_start:
     .4byte 0x00000095       ; display memory start address
@@ -698,14 +729,14 @@ display_list_end:
     .space 40*256
 
 sprite_list:
-    .4byte redball + (0 << 4), 0, 0x00000000, 0
-    .4byte redball + (1 << 4), 0, 0x00000000, 0
-    .4byte redball + (2 << 4), 0, 0x00000000, 0
-    .4byte redball + (3 << 4), 0, 0x00000000, 0
-    .4byte redball + (4 << 4), 0, 0x00000000, 0
-    .4byte redball + (5 << 4), 0, 0x00000000, 0
-    .4byte redball + (6 << 4), 0, 0x00000000, 0
-    .4byte redball + (7 << 4), 0, 0x00000000, 0
+    .4byte 0x80000000 | redball + (0 << 4), 0, 0x00000000, 0
+    .4byte 0x80000000 | redball + (1 << 4), 0, 0x00000000, 0
+    .4byte 0x80000000 | redball + (2 << 4), 0, 0x00000000, 0
+    .4byte 0x80000000 | redball + (3 << 4), 0, 0x00000000, 0
+    .4byte 0x80000000 | redball + (4 << 4), 0, 0x00000000, 0
+    .4byte 0x80000000 | redball + (5 << 4), 0, 0x00000000, 0
+    .4byte 0x80000000 | redball + (6 << 4), 0, 0x00000000, 0
+    .4byte 0x80000000 | redball + (7 << 4), 0, 0x00000000, 0
     .4byte redball + (8 << 4), 0, 0x00000000, 0
     .4byte redball + (9 << 4), 0, 0x00000000, 0
     .4byte redball + (10 << 4), 0, 0x00000000, 0
@@ -728,38 +759,38 @@ sprite_list:
     .4byte greenball + (7 << 4), 0, 0x00000000, 0
     .4byte greenball + (8 << 4), 0, 0x00000000, 0
     .4byte greenball + (9 << 4), 0, 0x00000000, 0
-    .4byte greenball + (10 << 4), 0, redball + (0 << 4), 160-8
-    .4byte greenball + (11 << 4), 0, redball + (1 << 4), 160-8
-    .4byte greenball + (12 << 4), 0, redball + (2 << 4), 160-8
-    .4byte greenball + (13 << 4), 0, redball + (3 << 4), 160-8
-    .4byte greenball + (14 << 4), 0, redball + (4 << 4), 160-8
-    .4byte greenball + (15 << 4), 0, redball + (5 << 4), 160-8
-    .4byte 0x00000000, 0, redball + (6 << 4), 160-8
-    .4byte 0x00000000, 0, redball + (7 << 4), 160-8
-    .4byte 0x00000000, 0, redball + (8 << 4), 160-8
-    .4byte 0x00000000, 0, redball + (9 << 4), 160-8
-    .4byte blueball + (0 << 4), 0, redball + (10 << 4), 160-8
-    .4byte blueball + (1 << 4), 0, redball + (11 << 4), 160-8
-    .4byte blueball + (2 << 4), 0, redball + (12 << 4), 160-8
-    .4byte blueball + (3 << 4), 0, redball + (13 << 4), 160-8
-    .4byte blueball + (4 << 4), 0, redball + (14 << 4), 160-8
-    .4byte blueball + (5 << 4), 0, redball + (15 << 4), 160-8
-    .4byte blueball + (6 << 4), 0, 0x00000000, 0
-    .4byte blueball + (7 << 4), 0, 0x00000000, 0
-    .4byte blueball + (8 << 4), 0, 0x00000000, 0
-    .4byte blueball + (9 << 4), 0, 0x00000000, 0
-    .4byte blueball + (10 << 4), 0, 0x00000000, 0
-    .4byte blueball + (11 << 4), 0, 0x00000000, 0
-    .4byte blueball + (12 << 4), 0, 0x00000000, 0
-    .4byte blueball + (13 << 4), 0, 0x00000000, 0
-    .4byte blueball + (14 << 4), 0, 0x00000000, 0
-    .4byte blueball + (15 << 4), 0, 0x00000000, 0
-    .4byte 0x00000000, 0, 0x00000000, 0
-    .4byte 0x00000000, 0, 0x00000000, 0
-    .4byte 0x00000000, 0, 0x00000000, 0
-    .4byte 0x00000000, 0, 0x00000000, 0
-    .4byte redball + (0 << 4), 0, 0x00000000, 0
-    .4byte redball + (1 << 4), 0, 0x00000000, 0
+    .4byte greenball + (10 << 4), 0, 0x80000000 | redball + (0 << 4), 160-8
+    .4byte greenball + (11 << 4), 0, 0x80000000 | redball + (0 << 4), 160-8
+    .4byte greenball + (12 << 4), 0, 0x80000000 | redball + (1 << 4), 160-8
+    .4byte greenball + (13 << 4), 0, 0x80000000 | redball + (1 << 4), 160-8
+    .4byte greenball + (14 << 4), 0, 0x80000000 | redball + (2 << 4), 160-8
+    .4byte greenball + (15 << 4), 0, 0x80000000 | redball + (2 << 4), 160-8
+    .4byte 0x00000000, 0, 0x80000000 | redball + (3 << 4), 160-8
+    .4byte 0x00000000, 0, 0x80000000 | redball + (3 << 4), 160-8
+    .4byte 0x00000000, 0, 0x80000000 | redball + (4 << 4), 160-8
+    .4byte 0x00000000, 0, 0x80000000 | redball + (4 << 4), 160-8
+    .4byte blueball + (0 << 4), 0, 0x80000000 | redball + (5 << 4), 160-8
+    .4byte blueball + (1 << 4), 0, 0x80000000 | redball + (5 << 4), 160-8
+    .4byte blueball + (2 << 4), 0, 0x80000000 | redball + (6 << 4), 160-8
+    .4byte blueball + (3 << 4), 0, 0x80000000 | redball + (6 << 4), 160-8
+    .4byte blueball + (4 << 4), 0, 0x80000000 | redball + (7 << 4), 160-8
+    .4byte blueball + (5 << 4), 0, 0x80000000 | redball + (7 << 4), 160-8
+    .4byte blueball + (6 << 4), 0, 0x80000000 | redball + (8 << 4), 160-8
+    .4byte blueball + (7 << 4), 0, 0x80000000 | redball + (8 << 4), 160-8
+    .4byte blueball + (8 << 4), 0, 0x80000000 | redball + (9 << 4), 160-8
+    .4byte blueball + (9 << 4), 0, 0x80000000 | redball + (9 << 4), 160-8
+    .4byte blueball + (10 << 4), 0, 0x80000000 | redball + (10 << 4), 160-8
+    .4byte blueball + (11 << 4), 0, 0x80000000 | redball + (10 << 4), 160-8
+    .4byte blueball + (12 << 4), 0, 0x80000000 | redball + (11 << 4), 160-8
+    .4byte blueball + (13 << 4), 0, 0x80000000 | redball + (11 << 4), 160-8
+    .4byte blueball + (14 << 4), 0, 0x80000000 | redball + (12 << 4), 160-8
+    .4byte blueball + (15 << 4), 0, 0x80000000 | redball + (12 << 4), 160-8
+    .4byte 0x00000000, 0, 0x80000000 | redball + (13 << 4), 160-8
+    .4byte 0x00000000, 0, 0x80000000 | redball + (13 << 4), 160-8
+    .4byte 0x00000000, 0, 0x80000000 | redball + (14 << 4), 160-8
+    .4byte 0x00000000, 0, 0x80000000 | redball + (14 << 4), 160-8
+    .4byte redball + (0 << 4), 0, 0x80000000 | redball + (15 << 4), 160-8
+    .4byte redball + (1 << 4), 0, 0x80000000 | redball + (15 << 4), 160-8
     .4byte redball + (2 << 4), 0, 0x00000000, 0
     .4byte redball + (3 << 4), 0, 0x00000000, 0
     .4byte redball + (4 << 4), 0, 0x00000000, 0
