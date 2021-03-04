@@ -1,7 +1,7 @@
 #!/bin/sh
 
-./scripts/png2asm.py -i assets/32x32grey.png -o include/grey.inc -sw 32 -sh 32
-./scripts/png2asm.py -i assets/32x32blue.png -o include/blue.inc -sw 32 -sh 32
+./scripts/png2asm.py -i assets/32x32grey.png -o include/grey.inc -sw 32 -sh 32 -ss
+./scripts/png2asm.py -i assets/32x32blue.png -o include/blue.inc -sw 32 -sh 32 -ss
 ./scripts/png2asm.py -i assets/redball.png -o include/redball.inc -sw 16 -sh 16
 ./scripts/png2asm.py -i assets/greenball.png -o include/greenball.inc -sw 16 -sh 16
 ./scripts/png2asm.py -i assets/blueball.png -o include/blueball.inc -sw 16 -sh 16

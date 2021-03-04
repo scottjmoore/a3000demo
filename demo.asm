@@ -94,7 +94,6 @@ main:
 main_loop:
     ADRL R1,buffer
     LDR R12,[R1]
-    ADD R12,R12,#28*320
     LDR R11,[R1,#4]
     LDR R3,[R1,#16]
     CMP R3,#0
@@ -131,7 +130,7 @@ reset_sprite_positions:
     SUBS R9,R9,#1
     BNE reset_sprite_positions
 
-    MOV R9,#200
+    MOV R9,#256
 
     MOV R0,#19
     SWI OS_Byte
@@ -146,7 +145,9 @@ reset_sprite_positions:
     LDMIA R0,{R2-R3}
     STMIA R1,{R2-R3}
     ;NOP
-    NOP
+    ;NOP
+    ;NOP
+    ;NOP
 
 display_list_loop:
     MOV R8,R12
@@ -179,7 +180,7 @@ display_list_loop:
     MOV R12,R8
 
 display_list_offset_branch:
-    BFL R0,display_list_offset_032
+    BFL R0,display_list_offset_003
 
     MOV R12,R8
     MOV R1,#buffer
@@ -280,6 +281,7 @@ exit:
     MOV R0,#0
     SWI OS_Exit     ; return to RISC OS
 
+.balign 16
 single_sprite:
     LDMIA R6,{R0-R3}
     MOV R7,R0,LSR #24
@@ -335,6 +337,7 @@ single_sprite:
     STRNEB R7,[R12, #12]
     MOV PC,R14
 
+.balign 16
 double_sprite:
     LDMIA R6,{R0-R3}
     MOV R7,R0,LSR #24
@@ -407,6 +410,7 @@ double_sprite:
     MOVS R7,#0xff
     MOV PC,R14
 
+.balign 16
 display_list_offset_000:
     LDR R10,[R11],#4
     CMP R10,#0x00000000
@@ -470,6 +474,587 @@ display_list_offset_000:
     
     MOV PC,R14
 
+
+.balign 16
+display_list_offset_001:
+    LDR R10,[R11],#4
+    CMP R10,#0x00000000
+    ADDEQ R12,R12,#32
+    BEQ .skip_001_1
+    ADD R10,R10,#32*32
+    LDMIA R10,{R0-R7}
+    STMIA R12!,{R0-R6}
+    LDR R0,[R12,#4]
+    AND R0,R0,#0xff000000
+    AND R7,R7,#0x00ffffff
+    ORR R0,R0,R7
+    STR R0,[R12],#4
+
+.skip_001_1:
+    LDR R10,[R11],#4
+    CMP R10,#0x00000000
+    ADD R10,R10,#32*32
+    ADDEQ R12,R12,#32
+    BEQ .skip_001_2
+    LDMIA R10,{R0-R7}
+    STMIA R12!,{R0-R6}
+    LDR R0,[R12,#4]
+    AND R0,R0,#0xff000000
+    MOV R1,R7,LSR #24
+    AND R7,R7,#0x00ffffff
+    ORR R0,R0,R7
+    STR R0,[R12],#4
+    STRB R1,[R12,#-33]
+    
+.skip_001_2:
+    LDR R10,[R11],#4
+    CMP R10,#0x00000000
+    ADDEQ R12,R12,#32
+    BEQ .skip_001_3
+    ADD R10,R10,#32*32
+    LDMIA R10,{R0-R7}
+    STMIA R12!,{R0-R6}
+    LDR R0,[R12,#4]
+    AND R0,R0,#0xff000000
+    MOV R1,R7,LSR #24
+    AND R7,R7,#0x00ffffff
+    ORR R0,R0,R7
+    STR R0,[R12],#4
+    STRB R1,[R12,#-33]
+    
+.skip_001_3:
+    LDR R10,[R11],#4
+    CMP R10,#0x00000000
+    ADDEQ R12,R12,#32
+    BEQ .skip_001_4
+    ADD R10,R10,#32*32
+    LDMIA R10,{R0-R7}
+    STMIA R12!,{R0-R6}
+    LDR R0,[R12,#4]
+    AND R0,R0,#0xff000000
+    MOV R1,R7,LSR #24
+    AND R7,R7,#0x00ffffff
+    ORR R0,R0,R7
+    STR R0,[R12],#4
+    STRB R1,[R12,#-33]
+    
+.skip_001_4:
+    LDR R10,[R11],#4
+    CMP R10,#0x00000000
+    ADDEQ R12,R12,#32
+    BEQ .skip_001_5
+    ADD R10,R10,#32*32
+    LDMIA R10,{R0-R7}
+    STMIA R12!,{R0-R6}
+    LDR R0,[R12,#4]
+    AND R0,R0,#0xff000000
+    MOV R1,R7,LSR #24
+    AND R7,R7,#0x00ffffff
+    ORR R0,R0,R7
+    STR R0,[R12],#4
+    STRB R1,[R12,#-33]
+    
+.skip_001_5:
+    LDR R10,[R11],#4
+    CMP R10,#0x00000000
+    ADDEQ R12,R12,#32
+    BEQ .skip_001_6
+    ADD R10,R10,#32*32
+    LDMIA R10,{R0-R7}
+    STMIA R12!,{R0-R6}
+    LDR R0,[R12,#4]
+    AND R0,R0,#0xff000000
+    MOV R1,R7,LSR #24
+    AND R7,R7,#0x00ffffff
+    ORR R0,R0,R7
+    STR R0,[R12],#4
+    STRB R1,[R12,#-33]
+    
+.skip_001_6:
+    LDR R10,[R11],#4
+    CMP R10,#0x00000000
+    ADDEQ R12,R12,#32
+    BEQ .skip_001_7
+    ADD R10,R10,#32*32
+    LDMIA R10,{R0-R7}
+    STMIA R12!,{R0-R6}
+    LDR R0,[R12,#4]
+    AND R0,R0,#0xff000000
+    MOV R1,R7,LSR #24
+    AND R7,R7,#0x00ffffff
+    ORR R0,R0,R7
+    STR R0,[R12],#4
+    STRB R1,[R12,#-33]
+    
+.skip_001_7:
+    LDR R10,[R11],#4
+    CMP R10,#0x00000000
+    ADDEQ R12,R12,#32
+    BEQ .skip_001_8
+    ADD R10,R10,#32*32
+    LDMIA R10,{R0-R7}
+    STMIA R12!,{R0-R6}
+    LDR R0,[R12,#4]
+    AND R0,R0,#0xff000000
+    MOV R1,R7,LSR #24
+    AND R7,R7,#0x00ffffff
+    ORR R0,R0,R7
+    STR R0,[R12],#4
+    STRB R1,[R12,#-33]
+    
+.skip_001_8:
+    LDR R10,[R11],#4
+    CMP R10,#0x00000000
+    ADDEQ R12,R12,#32
+    BEQ .skip_001_9
+    ADD R10,R10,#32*32
+    LDMIA R10,{R0-R7}
+    STMIA R12!,{R0-R6}
+    LDR R0,[R12,#4]
+    AND R0,R0,#0xff000000
+    MOV R1,R7,LSR #24
+    AND R7,R7,#0x00ffffff
+    ORR R0,R0,R7
+    STR R0,[R12],#4
+    STRB R1,[R12,#-33]
+    
+.skip_001_9:
+    LDR R10,[R11],#4
+    CMP R10,#0x00000000
+    ADDEQ R12,R12,#32
+    BEQ .skip_001_10
+    ADD R10,R10,#32*32
+    LDMIA R10,{R0-R7}
+    STMIA R12!,{R0-R6}
+    LDR R0,[R12,#4]
+    AND R0,R0,#0xff000000
+    MOV R1,R7,LSR #24
+    AND R7,R7,#0x00ffffff
+    ORR R0,R0,R7
+    STR R0,[R12],#4
+    STRB R1,[R12,#-33]
+    
+.skip_001_10:
+    MOV PC,R14
+
+.balign 16
+display_list_offset_002:
+    LDR R10,[R11],#4
+    CMP R10,#0x00000000
+    ADDEQ R12,R12,#32
+    BEQ .skip_002_1
+    ADD R10,R10,#32*32*2
+    LDMIA R10,{R0-R7}
+    STMIA R12!,{R0-R6}
+    LDR R0,[R12,#4]
+    MOV R2,#0xff000000
+    ORR R2,R2,R2,LSR #8
+    AND R0,R0,R2
+    MOV R1,R7,LSR #16
+    AND R7,R7,R2,LSR #16
+    ORR R0,R0,R7
+    STR R0,[R12],#4
+
+.skip_002_1:
+    LDR R10,[R11],#4
+    CMP R10,#0x00000000
+    ADDEQ R12,R12,#32
+    BEQ .skip_002_2
+    ADD R10,R10,#32*32*2
+    LDMIA R10,{R0-R7}
+    STMIA R12!,{R0-R6}
+    LDR R0,[R12,#4]
+    MOV R2,#0xff000000
+    ORR R2,R2,R2,LSR #8
+    AND R0,R0,R2
+    MOV R1,R7,LSR #16
+    AND R7,R7,R2,LSR #16
+    ORR R0,R0,R7
+    STR R0,[R12],#4
+    
+    LDR R0,[R12,#-36]
+    AND R0,R0,R2,LSR #16
+    ORR R0,R0,R1,LSL #16
+    STR R0,[R12,#-36]
+    
+.skip_002_2:
+    LDR R10,[R11],#4
+    CMP R10,#0x00000000
+    ADDEQ R12,R12,#32
+    BEQ .skip_002_3
+    ADD R10,R10,#32*32*2
+    LDMIA R10,{R0-R7}
+    STMIA R12!,{R0-R6}
+    LDR R0,[R12,#4]
+    MOV R2,#0xff000000
+    ORR R2,R2,R2,LSR #8
+    AND R0,R0,R2
+    MOV R1,R7,LSR #16
+    AND R7,R7,R2,LSR #16
+    ORR R0,R0,R7
+    STR R0,[R12],#4
+    
+    LDR R0,[R12,#-36]
+    AND R0,R0,R2,LSR #16
+    ORR R0,R0,R1,LSL #16
+    STR R0,[R12,#-36]
+    
+.skip_002_3:
+    LDR R10,[R11],#4
+    CMP R10,#0x00000000
+    ADDEQ R12,R12,#32
+    BEQ .skip_002_4
+    ADD R10,R10,#32*32*2
+    LDMIA R10,{R0-R7}
+    STMIA R12!,{R0-R6}
+    LDR R0,[R12,#4]
+    MOV R2,#0xff000000
+    ORR R2,R2,R2,LSR #8
+    AND R0,R0,R2
+    MOV R1,R7,LSR #16
+    AND R7,R7,R2,LSR #16
+    ORR R0,R0,R7
+    STR R0,[R12],#4
+    
+    LDR R0,[R12,#-36]
+    AND R0,R0,R2,LSR #16
+    ORR R0,R0,R1,LSL #16
+    STR R0,[R12,#-36]
+    
+.skip_002_4:
+    LDR R10,[R11],#4
+    CMP R10,#0x00000000
+    ADDEQ R12,R12,#32
+    BEQ .skip_002_5
+    ADD R10,R10,#32*32*2
+    LDMIA R10,{R0-R7}
+    STMIA R12!,{R0-R6}
+    LDR R0,[R12,#4]
+    MOV R2,#0xff000000
+    ORR R2,R2,R2,LSR #8
+    AND R0,R0,R2
+    MOV R1,R7,LSR #16
+    AND R7,R7,R2,LSR #16
+    ORR R0,R0,R7
+    STR R0,[R12],#4
+    
+    LDR R0,[R12,#-36]
+    AND R0,R0,R2,LSR #16
+    ORR R0,R0,R1,LSL #16
+    STR R0,[R12,#-36]
+    
+.skip_002_5:
+    LDR R10,[R11],#4
+    CMP R10,#0x00000000
+    ADDEQ R12,R12,#32
+    BEQ .skip_002_6
+    ADD R10,R10,#32*32*2
+    LDMIA R10,{R0-R7}
+    STMIA R12!,{R0-R6}
+    LDR R0,[R12,#4]
+    MOV R2,#0xff000000
+    ORR R2,R2,R2,LSR #8
+    AND R0,R0,R2
+    MOV R1,R7,LSR #16
+    AND R7,R7,R2,LSR #16
+    ORR R0,R0,R7
+    STR R0,[R12],#4
+    
+    LDR R0,[R12,#-36]
+    AND R0,R0,R2,LSR #16
+    ORR R0,R0,R1,LSL #16
+    STR R0,[R12,#-36]
+    
+.skip_002_6:
+    LDR R10,[R11],#4
+    CMP R10,#0x00000000
+    ADDEQ R12,R12,#32
+    BEQ .skip_002_7
+    ADD R10,R10,#32*32*2
+    LDMIA R10,{R0-R7}
+    STMIA R12!,{R0-R6}
+    LDR R0,[R12,#4]
+    MOV R2,#0xff000000
+    ORR R2,R2,R2,LSR #8
+    AND R0,R0,R2
+    MOV R1,R7,LSR #16
+    AND R7,R7,R2,LSR #16
+    ORR R0,R0,R7
+    STR R0,[R12],#4
+    
+    LDR R0,[R12,#-36]
+    AND R0,R0,R2,LSR #16
+    ORR R0,R0,R1,LSL #16
+    STR R0,[R12,#-36]
+    
+.skip_002_7:
+    LDR R10,[R11],#4
+    CMP R10,#0x00000000
+    ADDEQ R12,R12,#32
+    BEQ .skip_002_8
+    ADD R10,R10,#32*32*2
+    LDMIA R10,{R0-R7}
+    STMIA R12!,{R0-R6}
+    LDR R0,[R12,#4]
+    MOV R2,#0xff000000
+    ORR R2,R2,R2,LSR #8
+    AND R0,R0,R2
+    MOV R1,R7,LSR #16
+    AND R7,R7,R2,LSR #16
+    ORR R0,R0,R7
+    STR R0,[R12],#4
+    
+    LDR R0,[R12,#-36]
+    AND R0,R0,R2,LSR #16
+    ORR R0,R0,R1,LSL #16
+    STR R0,[R12,#-36]
+    
+.skip_002_8:
+    LDR R10,[R11],#4
+    CMP R10,#0x00000000
+    ADDEQ R12,R12,#32
+    BEQ .skip_002_9
+    ADD R10,R10,#32*32*2
+    LDMIA R10,{R0-R7}
+    STMIA R12!,{R0-R6}
+    LDR R0,[R12,#4]
+    MOV R2,#0xff000000
+    ORR R2,R2,R2,LSR #8
+    AND R0,R0,R2
+    MOV R1,R7,LSR #16
+    AND R7,R7,R2,LSR #16
+    ORR R0,R0,R7
+    STR R0,[R12],#4
+    
+    LDR R0,[R12,#-36]
+    AND R0,R0,R2,LSR #16
+    ORR R0,R0,R1,LSL #16
+    STR R0,[R12,#-36]
+    
+.skip_002_9:
+    LDR R10,[R11],#4
+    CMP R10,#0x00000000
+    ADDEQ R12,R12,#32
+    BEQ .skip_002_10
+    ADD R10,R10,#32*32*2
+    LDMIA R10,{R0-R7}
+    STMIA R12!,{R0-R6}
+    LDR R0,[R12,#4]
+    MOV R2,#0xff000000
+    ORR R2,R2,R2,LSR #8
+    AND R0,R0,R2
+    MOV R1,R7,LSR #16
+    AND R7,R7,R2,LSR #16
+    ORR R0,R0,R7
+    STR R0,[R12],#4
+    
+    LDR R0,[R12,#-36]
+    AND R0,R0,R2,LSR #16
+    ORR R0,R0,R1,LSL #16
+    STR R0,[R12,#-36]
+    
+.skip_002_10:
+    MOV PC,R14
+
+.balign 16
+display_list_offset_003:
+    LDR R10,[R11],#4
+    CMP R10,#0x00000000
+    ADDEQ R12,R12,#32
+    BEQ .skip_003_1
+    ADD R10,R10,#32*32*3
+    LDMIA R10,{R0-R7}
+    STMIA R12!,{R0-R6}
+    LDR R0,[R12,#4]
+    AND R0,R0,#0xffffff00
+    AND R7,R7,#0x000000ff
+    ORR R0,R0,R7
+    STR R0,[R12],#4
+
+.skip_003_1:
+    LDR R10,[R11],#4
+    CMP R10,#0x00000000
+    ADDEQ R12,R12,#32
+    BEQ .skip_003_2
+    ADD R10,R10,#32*32*3
+    LDMIA R10,{R0-R7}
+    STMIA R12!,{R0-R6}
+    LDR R0,[R12,#4]
+    AND R0,R0,#0xffffff00
+    MOV R1,R7,LSR #8
+    AND R7,R7,#0x000000ff
+    ORR R0,R0,R7
+    STR R0,[R12],#4
+    
+    LDR R0,[R12,#-36]
+    AND R0,R0,#0x000000ff
+    ORR R0,R0,R1,LSL #8
+    STR R0,[R12,#-36]
+    
+.skip_003_2:
+    LDR R10,[R11],#4
+    CMP R10,#0x00000000
+    ADDEQ R12,R12,#32
+    BEQ .skip_003_3
+    ADD R10,R10,#32*32*3
+    LDMIA R10,{R0-R7}
+    STMIA R12!,{R0-R6}
+    LDR R0,[R12,#4]
+    AND R0,R0,#0xffffff00
+    MOV R1,R7,LSR #8
+    AND R7,R7,#0x000000ff
+    ORR R0,R0,R7
+    STR R0,[R12],#4
+    
+    LDR R0,[R12,#-36]
+    AND R0,R0,#0x000000ff
+    ORR R0,R0,R1,LSL #8
+    STR R0,[R12,#-36]
+    
+.skip_003_3:
+    LDR R10,[R11],#4
+    CMP R10,#0x00000000
+    ADDEQ R12,R12,#32
+    BEQ .skip_003_4
+    ADD R10,R10,#32*32*3
+    LDMIA R10,{R0-R7}
+    STMIA R12!,{R0-R6}
+    LDR R0,[R12,#4]
+    AND R0,R0,#0xffffff00
+    MOV R1,R7,LSR #8
+    AND R7,R7,#0x000000ff
+    ORR R0,R0,R7
+    STR R0,[R12],#4
+    
+    LDR R0,[R12,#-36]
+    AND R0,R0,#0x000000ff
+    ORR R0,R0,R1,LSL #8
+    STR R0,[R12,#-36]
+    
+.skip_003_4:
+    LDR R10,[R11],#4
+    CMP R10,#0x00000000
+    ADDEQ R12,R12,#32
+    BEQ .skip_003_5
+    ADD R10,R10,#32*32*3
+    LDMIA R10,{R0-R7}
+    STMIA R12!,{R0-R6}
+    LDR R0,[R12,#4]
+    AND R0,R0,#0xffffff00
+    MOV R1,R7,LSR #8
+    AND R7,R7,#0x000000ff
+    ORR R0,R0,R7
+    STR R0,[R12],#4
+    
+    LDR R0,[R12,#-36]
+    AND R0,R0,#0x000000ff
+    ORR R0,R0,R1,LSL #8
+    STR R0,[R12,#-36]
+    
+.skip_003_5:
+    LDR R10,[R11],#4
+    CMP R10,#0x00000000
+    ADDEQ R12,R12,#32
+    BEQ .skip_003_6
+    ADD R10,R10,#32*32*3
+    LDMIA R10,{R0-R7}
+    STMIA R12!,{R0-R6}
+    LDR R0,[R12,#4]
+    AND R0,R0,#0xffffff00
+    MOV R1,R7,LSR #8
+    AND R7,R7,#0x000000ff
+    ORR R0,R0,R7
+    STR R0,[R12],#4
+    
+    LDR R0,[R12,#-36]
+    AND R0,R0,#0x000000ff
+    ORR R0,R0,R1,LSL #8
+    STR R0,[R12,#-36]
+    
+.skip_003_6:
+    LDR R10,[R11],#4
+    CMP R10,#0x00000000
+    ADDEQ R12,R12,#32
+    BEQ .skip_003_7
+    ADD R10,R10,#32*32*3
+    LDMIA R10,{R0-R7}
+    STMIA R12!,{R0-R6}
+    LDR R0,[R12,#4]
+    AND R0,R0,#0xffffff00
+    MOV R1,R7,LSR #8
+    AND R7,R7,#0x000000ff
+    ORR R0,R0,R7
+    STR R0,[R12],#4
+    
+    LDR R0,[R12,#-36]
+    AND R0,R0,#0x000000ff
+    ORR R0,R0,R1,LSL #8
+    STR R0,[R12,#-36]
+    
+.skip_003_7:
+    LDR R10,[R11],#4
+    CMP R10,#0x00000000
+    ADDEQ R12,R12,#32
+    BEQ .skip_003_8
+    ADD R10,R10,#32*32*3
+    LDMIA R10,{R0-R7}
+    STMIA R12!,{R0-R6}
+    LDR R0,[R12,#4]
+    AND R0,R0,#0xffffff00
+    MOV R1,R7,LSR #8
+    AND R7,R7,#0x000000ff
+    ORR R0,R0,R7
+    STR R0,[R12],#4
+    
+    LDR R0,[R12,#-36]
+    AND R0,R0,#0x000000ff
+    ORR R0,R0,R1,LSL #8
+    STR R0,[R12,#-36]
+    
+.skip_003_8:
+    LDR R10,[R11],#4
+    CMP R10,#0x00000000
+    ADDEQ R12,R12,#32
+    BEQ .skip_003_9
+    ADD R10,R10,#32*32*3
+    LDMIA R10,{R0-R7}
+    STMIA R12!,{R0-R6}
+    LDR R0,[R12,#4]
+    AND R0,R0,#0xffffff00
+    MOV R1,R7,LSR #8
+    AND R7,R7,#0x000000ff
+    ORR R0,R0,R7
+    STR R0,[R12],#4
+    
+    LDR R0,[R12,#-36]
+    AND R0,R0,#0x000000ff
+    ORR R0,R0,R1,LSL #8
+    STR R0,[R12,#-36]
+    
+.skip_003_9:
+    LDR R10,[R11],#4
+    CMP R10,#0x00000000
+    ADDEQ R12,R12,#32
+    BEQ .skip_003_10
+    ADD R10,R10,#32*32*3
+    LDMIA R10,{R0-R7}
+    STMIA R12!,{R0-R6}
+    LDR R0,[R12,#4]
+    AND R0,R0,#0xffffff00
+    MOV R1,R7,LSR #8
+    AND R7,R7,#0x000000ff
+    ORR R0,R0,R7
+    STR R0,[R12],#4
+    
+    LDR R0,[R12,#-36]
+    AND R0,R0,#0x000000ff
+    ORR R0,R0,R1,LSL #8
+    STR R0,[R12,#-36]
+    
+.skip_003_10:
+    MOV PC,R14
+
+.balign 16
 display_list_offset_004:
     LDR R10,[R11],#4
     CMP R10,#0x00000000
@@ -534,6 +1119,7 @@ display_list_offset_004:
     
     MOV PC,R14
 
+.balign 16
 display_list_offset_008:
     LDR R10,[R11],#4
     CMP R10,#0x00000000
@@ -599,6 +1185,7 @@ display_list_offset_008:
     
     MOV PC,R14
 
+.balign 16
 display_list_offset_012:
     ADD R13,R12,#308
     LDR R10,[R11],#4
@@ -664,6 +1251,7 @@ display_list_offset_012:
     
     MOV PC,R14
 
+.balign 16
 display_list_offset_016:
     ADD R13,R12,#304
     LDR R10,[R11],#4
@@ -729,6 +1317,7 @@ display_list_offset_016:
     
     MOV PC,R14
 
+.balign 16
 display_list_offset_020:
     ADD R13,R12,#300
     LDR R10,[R11],#4
@@ -794,6 +1383,7 @@ display_list_offset_020:
     
     MOV PC,R14
 
+.balign 16
 display_list_offset_024:
     ADD R13,R12,#296
     LDR R10,[R11],#4
@@ -859,6 +1449,7 @@ display_list_offset_024:
     
     MOV PC,R14
 
+.balign 16
 display_list_offset_028:
     ADD R13,R12,#292
     LDR R10,[R11],#4
@@ -924,6 +1515,7 @@ display_list_offset_028:
     
     MOV PC,R14
 
+.balign 16
 display_list_offset_032:
     LDR R10,[R11,#4]!
     CMP R10,#0x00000000
@@ -988,6 +1580,7 @@ display_list_offset_032:
     
     MOV PC,R14
 
+.balign 16
 display_list_offset_036:
     LDR R10,[R11,#4]!
     CMP R10,#0x00000000
@@ -1053,6 +1646,7 @@ display_list_offset_036:
     
     MOV PC,R14
 
+.balign 16
 display_list_offset_040:
     LDR R10,[R11,#4]!
     CMP R10,#0x00000000
@@ -1119,6 +1713,7 @@ display_list_offset_040:
     
     MOV PC,R14
 
+.balign 16
 display_list_offset_044:
     ADD R13,R12,#308
     LDR R10,[R11,#4]!
@@ -1185,6 +1780,7 @@ display_list_offset_044:
     
     MOV PC,R14
 
+.balign 16
 display_list_offset_048:
     ADD R13,R12,#304
     LDR R10,[R11,#4]!
@@ -1251,6 +1847,7 @@ display_list_offset_048:
     
     MOV PC,R14
 
+.balign 16
 display_list_offset_052:
     ADD R13,R12,#300
     LDR R10,[R11,#4]!
@@ -1317,6 +1914,7 @@ display_list_offset_052:
     
     MOV PC,R14
 
+.balign 16
 display_list_offset_056:
     ADD R13,R12,#296
     LDR R10,[R11,#4]!
@@ -1383,6 +1981,7 @@ display_list_offset_056:
     
     MOV PC,R14
 
+.balign 16
 display_list_offset_060:
     ADD R13,R12,#292
     LDR R10,[R11,#4]!
@@ -1449,28 +2048,79 @@ display_list_offset_060:
     
     MOV PC,R14
 
+.balign 16
 display_list_offset_list:
     MOV R0,#display_list_offset_000
+    MOV R0,#display_list_offset_001
+    MOV R0,#display_list_offset_002
+    MOV R0,#display_list_offset_003
     MOV R0,#display_list_offset_004
+    MOV R0,#display_list_offset_001
+    MOV R0,#display_list_offset_002
+    MOV R0,#display_list_offset_003
     MOV R0,#display_list_offset_008
+    MOV R0,#display_list_offset_001
+    MOV R0,#display_list_offset_002
+    MOV R0,#display_list_offset_003
     MOV R0,#display_list_offset_012
+    MOV R0,#display_list_offset_001
+    MOV R0,#display_list_offset_002
+    MOV R0,#display_list_offset_003
     MOV R0,#display_list_offset_016
+    MOV R0,#display_list_offset_001
+    MOV R0,#display_list_offset_002
+    MOV R0,#display_list_offset_003
     MOV R0,#display_list_offset_020
+    MOV R0,#display_list_offset_001
+    MOV R0,#display_list_offset_002
+    MOV R0,#display_list_offset_003
     MOV R0,#display_list_offset_024
+    MOV R0,#display_list_offset_001
+    MOV R0,#display_list_offset_002
+    MOV R0,#display_list_offset_003
     MOV R0,#display_list_offset_028
+    MOV R0,#display_list_offset_001
+    MOV R0,#display_list_offset_002
+    MOV R0,#display_list_offset_003
     MOV R0,#display_list_offset_032
+    MOV R0,#display_list_offset_001
+    MOV R0,#display_list_offset_002
+    MOV R0,#display_list_offset_003
     MOV R0,#display_list_offset_036
+    MOV R0,#display_list_offset_001
+    MOV R0,#display_list_offset_002
+    MOV R0,#display_list_offset_003
     MOV R0,#display_list_offset_040
+    MOV R0,#display_list_offset_001
+    MOV R0,#display_list_offset_002
+    MOV R0,#display_list_offset_003
     MOV R0,#display_list_offset_044
+    MOV R0,#display_list_offset_001
+    MOV R0,#display_list_offset_002
+    MOV R0,#display_list_offset_003
     MOV R0,#display_list_offset_048
+    MOV R0,#display_list_offset_001
+    MOV R0,#display_list_offset_002
+    MOV R0,#display_list_offset_003
     MOV R0,#display_list_offset_052
+    MOV R0,#display_list_offset_001
+    MOV R0,#display_list_offset_002
+    MOV R0,#display_list_offset_003
     MOV R0,#display_list_offset_056
+    MOV R0,#display_list_offset_001
+    MOV R0,#display_list_offset_002
+    MOV R0,#display_list_offset_003
     MOV R0,#display_list_offset_060
+    MOV R0,#display_list_offset_001
+    MOV R0,#display_list_offset_002
+    MOV R0,#display_list_offset_003
 
+.balign 16
 vdu_variables_screen_start:
     .4byte 0x00000095       ; display memory start address
     .4byte 0xffffffff
 
+.balign 16
 buffer:
     .4byte 0x00000000
     .4byte 0x00000000
