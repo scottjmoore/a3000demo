@@ -14,6 +14,10 @@ main:
     ADRL R1,vdu_variables_result
     SWI OS_ReadVduVariables
 
+    LDR R12,[R1,#0]
+
+    ADD R12,R12,#160 + (128 * 320)
+
     MOV R0,#0
     SWI OS_Exit
 
