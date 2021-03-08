@@ -40,28 +40,84 @@ loop:
     ADD R11,R12,#0 + (0 * 320)
     BL draw_compiled_sprite
 
+    ADD R11,R12,#50 + (0 * 320)
+    BL draw_compiled_sprite
+
     ADD R11,R12,#100 + (0 * 320)
+    BL draw_compiled_sprite
+
+    ADD R11,R12,#150 + (0 * 320)
     BL draw_compiled_sprite
 
     ADD R11,R12,#200 + (0 * 320)
     BL draw_compiled_sprite
 
-    ADD R11,R12,#0 + (100 * 320)
+    ADD R12,R12,#50 * 320
+
+    ADD R11,R12,#0 + (0 * 320)
     BL draw_compiled_sprite
 
-    ADD R11,R12,#100 + (100 * 320)
+    ADD R11,R12,#50 + (0 * 320)
     BL draw_compiled_sprite
 
-    ADD R11,R12,#200 + (100 * 320)
+    ADD R11,R12,#100 + (0 * 320)
     BL draw_compiled_sprite
 
-    ADD R11,R12,#0 + (200 * 320)
+    ADD R11,R12,#150 + (0 * 320)
     BL draw_compiled_sprite
 
-    ADD R11,R12,#100 + (200 * 320)
+    ADD R11,R12,#200 + (0 * 320)
     BL draw_compiled_sprite
 
-    ADD R11,R12,#200 + (200 * 320)
+    ADD R12,R12,#50 * 320
+    
+    ADD R11,R12,#0 + (0 * 320)
+    BL draw_compiled_sprite
+
+    ADD R11,R12,#50 + (0 * 320)
+    BL draw_compiled_sprite
+
+    ADD R11,R12,#100 + (0 * 320)
+    BL draw_compiled_sprite
+
+    ADD R11,R12,#150 + (0 * 320)
+    BL draw_compiled_sprite
+
+    ADD R11,R12,#200 + (0 * 320)
+    BL draw_compiled_sprite
+
+    ADD R12,R12,#50 * 320
+    
+    ADD R11,R12,#0 + (0 * 320)
+    BL draw_compiled_sprite
+
+    ADD R11,R12,#50 + (0 * 320)
+    BL draw_compiled_sprite
+
+    ADD R11,R12,#100 + (0 * 320)
+    BL draw_compiled_sprite
+
+    ADD R11,R12,#150 + (0 * 320)
+    BL draw_compiled_sprite
+
+    ADD R11,R12,#200 + (0 * 320)
+    BL draw_compiled_sprite
+
+    ADD R12,R12,#50 * 320
+    
+    ADD R11,R12,#0 + (0 * 320)
+    BL draw_compiled_sprite
+
+    ADD R11,R12,#50 + (0 * 320)
+    BL draw_compiled_sprite
+
+    ADD R11,R12,#100 + (0 * 320)
+    BL draw_compiled_sprite
+
+    ADD R11,R12,#150 + (0 * 320)
+    BL draw_compiled_sprite
+
+    ADD R11,R12,#200 + (0 * 320)
     BL draw_compiled_sprite
 
     VDU VDU_DefineLogicalColour,0,24,0,0,0,-1,-1,-1,-1
