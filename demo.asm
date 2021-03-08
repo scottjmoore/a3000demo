@@ -1,63 +1,5 @@
-; SWI function values
-.set OS_WriteC,0x00
-.set OS_WriteS,0x01
-.set OS_NewLine,0x03
-.set OS_Byte,0x06
-.set OS_Exit,0x11
-.set OS_ReadVduVariables,0x31
-
-; VDU function values
-.set VDU_TextColour,17
-.set VDU_Palette,19
-.set VDU_DefaultColours,20
-.set VDU_Mode,22
-.set VDU_Misc,23
-
-; VDU macro, can accept upto 6 parameters
-.macro VDU v1,v2,v3,v4,v5,v6,v7,v8,v9,v10
-    .nolist
-    .if \v1<>-1           ; if macro is passed 1 parameter
-        MOV R0,#\v1      ; move parameter 1 into R0
-        SWI OS_WriteC   ; write it to the display
-    .endif
-    .if \v2<>-1           ; if macro is passed 2 parameters
-        MOV R0,#\v2      ; move parameter 2 into R0
-        SWI OS_WriteC   ; write it to the display
-    .endif
-    .if \v3<>-1           ; if macro is passed 3 parameters
-        MOV R0,#\v3      ; move parameter 3 into R0
-        SWI OS_WriteC   ; write it to the display
-    .endif
-    .if \v4<>-1           ; if macro is passed 4 parameters
-        MOV R0,#\v4      ; move parameter 4 into R0
-        SWI OS_WriteC   ; write it to the display
-    .endif
-    .if \v5<>-1           ; if macro is passed 5 parameters
-        MOV R0,#\v5      ; move parameter 5 into R0
-        SWI OS_WriteC   ; write it to the display
-    .endif
-    .if \v6<>-1           ; if macro is passed 6 parameters
-        MOV R0,#\v6      ; move parameter 6 into R0
-        SWI OS_WriteC   ; write it to the display
-    .endif
-    .if \v7<>-1           ; if macro is passed 7 parameters
-        MOV R0,#\v7      ; move parameter 7 into R0
-        SWI OS_WriteC   ; write it to the display
-    .endif
-    .if \v8<>-1           ; if macro is passed 8 parameters
-        MOV R0,#\v8      ; move parameter 8 into R0
-        SWI OS_WriteC   ; write it to the display
-    .endif
-    .if \v9<>-1           ; if macro is passed 9 parameters
-        MOV R0,#\v9      ; move parameter 9 into R0
-        SWI OS_WriteC   ; write it to the display
-    .endif
-    .if \v10<>-1           ; if macro is passed 9 parameters
-        MOV R0,#\v10      ; move parameter 9 into R0
-        SWI OS_WriteC   ; write it to the display
-    .endif
-    .list
-.endm
+.include "swi.asm"
+.include "vdu.asm"
 
 ; BFL macro to branch to a fixed 32 bit address with linked return
 .macro BFL r,a
@@ -130,24 +72,27 @@ reset_sprite_positions:
     SUBS R9,R9,#1
     BNE reset_sprite_positions
 
+    LDR R0,[R1,#24]
+    ADD R0,R0,#1
+    CMP R0,#320
+    MOVGE R0,#0
+    STR R0,[R1,#24]
+    AND R10,R0,#31
+    MOV R0,R0,LSR #5
+    ;ADD R11,R11,R0,LSL #2
+    
+    MOV R0,#display_list_offset_list
+    ADD R0,R0,R10,LSL #3
+    MOV R1,#display_list_offset_branch
+    LDMIA R0,{R2-R3}
+    ;STMIA R1,{R2-R3}
+
     MOV R9,#256
 
     MOV R0,#19
     SWI OS_Byte
 
     VDU 19,0,24,0,0,240,-1,-1,-1,-1
-
-    MOV R2,R3,LSR #1
-    AND R2,R2,#15
-    MOV R0,#display_list_offset_list
-    ADD R0,R0,R2,LSL #3
-    MOV R1,#display_list_offset_branch
-    LDMIA R0,{R2-R3}
-    STMIA R1,{R2-R3}
-    ;NOP
-    ;NOP
-    ;NOP
-    ;NOP
 
 display_list_loop:
     MOV R8,R12
@@ -180,7 +125,7 @@ display_list_loop:
     MOV R12,R8
 
 display_list_offset_branch:
-    BFL R0,display_list_offset_003
+    BFL R0,display_list_offset_005
 
     MOV R12,R8
     MOV R1,#buffer
@@ -1120,6 +1065,174 @@ display_list_offset_004:
     MOV PC,R14
 
 .balign 16
+display_list_offset_005:
+    LDR R10,[R11],#4
+    CMP R10,#0x00000000
+    ADDEQ R12,R12,#28
+    BEQ .skip_005_1
+    ADD R10,R10,#32*32
+    LDMIA R10,{R0-R7}
+    STR R0,[R12,#316]
+    STMIA R12!,{R1-R6}
+    LDR R0,[R12]
+    AND R1,R7,#0x00ffffff
+    AND R0,R0,#0xff000000
+    ORR R0,R0,R1
+    STR R0,[R12]
+    LDR R0,[R12,#320-32]
+    AND R1,R7,#0xff000000
+    AND R0,R0,#0x00ffffff
+    ORR R0,R0,R1
+    STR R0,[R12,#320-32]
+
+.skip_005_1:
+    LDR R10,[R11],#4
+    CMP R10,#0x00000000
+    ADD R10,R10,#32*32
+    ADDEQ R12,R12,#32
+    BEQ .skip_005_2
+    LDMIA R10,{R0-R7}
+    STMIA R12!,{R0-R6}
+    LDR R0,[R12,#4]
+    AND R0,R0,#0xff000000
+    MOV R1,R7,LSR #24
+    AND R7,R7,#0x00ffffff
+    ORR R0,R0,R7
+    STR R0,[R12],#4
+    STRB R1,[R12,#-33]
+    
+.skip_005_2:
+    LDR R10,[R11],#4
+    CMP R10,#0x00000000
+    ADDEQ R12,R12,#32
+    BEQ .skip_005_3
+    ADD R10,R10,#32*32
+    LDMIA R10,{R0-R7}
+    STMIA R12!,{R0-R6}
+    LDR R0,[R12,#4]
+    AND R0,R0,#0xff000000
+    MOV R1,R7,LSR #24
+    AND R7,R7,#0x00ffffff
+    ORR R0,R0,R7
+    STR R0,[R12],#4
+    STRB R1,[R12,#-33]
+    
+.skip_005_3:
+    LDR R10,[R11],#4
+    CMP R10,#0x00000000
+    ADDEQ R12,R12,#32
+    BEQ .skip_005_4
+    ADD R10,R10,#32*32
+    LDMIA R10,{R0-R7}
+    STMIA R12!,{R0-R6}
+    LDR R0,[R12,#4]
+    AND R0,R0,#0xff000000
+    MOV R1,R7,LSR #24
+    AND R7,R7,#0x00ffffff
+    ORR R0,R0,R7
+    STR R0,[R12],#4
+    STRB R1,[R12,#-33]
+    
+.skip_005_4:
+    LDR R10,[R11],#4
+    CMP R10,#0x00000000
+    ADDEQ R12,R12,#32
+    BEQ .skip_005_5
+    ADD R10,R10,#32*32
+    LDMIA R10,{R0-R7}
+    STMIA R12!,{R0-R6}
+    LDR R0,[R12,#4]
+    AND R0,R0,#0xff000000
+    MOV R1,R7,LSR #24
+    AND R7,R7,#0x00ffffff
+    ORR R0,R0,R7
+    STR R0,[R12],#4
+    STRB R1,[R12,#-33]
+    
+.skip_005_5:
+    LDR R10,[R11],#4
+    CMP R10,#0x00000000
+    ADDEQ R12,R12,#32
+    BEQ .skip_005_6
+    ADD R10,R10,#32*32
+    LDMIA R10,{R0-R7}
+    STMIA R12!,{R0-R6}
+    LDR R0,[R12,#4]
+    AND R0,R0,#0xff000000
+    MOV R1,R7,LSR #24
+    AND R7,R7,#0x00ffffff
+    ORR R0,R0,R7
+    STR R0,[R12],#4
+    STRB R1,[R12,#-33]
+    
+.skip_005_6:
+    LDR R10,[R11],#4
+    CMP R10,#0x00000000
+    ADDEQ R12,R12,#32
+    BEQ .skip_005_7
+    ADD R10,R10,#32*32
+    LDMIA R10,{R0-R7}
+    STMIA R12!,{R0-R6}
+    LDR R0,[R12,#4]
+    AND R0,R0,#0xff000000
+    MOV R1,R7,LSR #24
+    AND R7,R7,#0x00ffffff
+    ORR R0,R0,R7
+    STR R0,[R12],#4
+    STRB R1,[R12,#-33]
+    
+.skip_005_7:
+    LDR R10,[R11],#4
+    CMP R10,#0x00000000
+    ADDEQ R12,R12,#32
+    BEQ .skip_005_8
+    ADD R10,R10,#32*32
+    LDMIA R10,{R0-R7}
+    STMIA R12!,{R0-R6}
+    LDR R0,[R12,#4]
+    AND R0,R0,#0xff000000
+    MOV R1,R7,LSR #24
+    AND R7,R7,#0x00ffffff
+    ORR R0,R0,R7
+    STR R0,[R12],#4
+    STRB R1,[R12,#-33]
+    
+.skip_005_8:
+    LDR R10,[R11],#4
+    CMP R10,#0x00000000
+    ADDEQ R12,R12,#32
+    BEQ .skip_005_9
+    ADD R10,R10,#32*32
+    LDMIA R10,{R0-R7}
+    STMIA R12!,{R0-R6}
+    LDR R0,[R12,#4]
+    AND R0,R0,#0xff000000
+    MOV R1,R7,LSR #24
+    AND R7,R7,#0x00ffffff
+    ORR R0,R0,R7
+    STR R0,[R12],#4
+    STRB R1,[R12,#-33]
+    
+.skip_005_9:
+    LDR R10,[R11],#4
+    CMP R10,#0x00000000
+    ADDEQ R12,R12,#32
+    BEQ .skip_005_10
+    ADD R10,R10,#32*32
+    LDMIA R10,{R0-R7}
+    STMIA R12!,{R0-R6}
+    LDR R0,[R12,#4]
+    AND R0,R0,#0xff000000
+    MOV R1,R7,LSR #24
+    AND R7,R7,#0x00ffffff
+    ORR R0,R0,R7
+    STR R0,[R12],#4
+    STRB R1,[R12,#-33]
+    
+.skip_005_10:
+    MOV PC,R14
+
+.balign 16
 display_list_offset_008:
     LDR R10,[R11],#4
     CMP R10,#0x00000000
@@ -1516,605 +1629,64 @@ display_list_offset_028:
     MOV PC,R14
 
 .balign 16
-display_list_offset_032:
-    LDR R10,[R11,#4]!
-    CMP R10,#0x00000000
-    LDMNEIA R10,{R0-R7}
-    ADDEQ R12,R12,#32
-    STMNEIA R12!,{R0-R7}
-
-    LDR R10,[R11,#4]!
-    CMP R10,#0x00000000
-    LDMNEIA R10,{R0-R7}
-    ADDEQ R12,R12,#32
-    STMNEIA R12!,{R0-R7}
-
-    LDR R10,[R11,#4]!
-    CMP R10,#0x00000000
-    LDMNEIA R10,{R0-R7}
-    ADDEQ R12,R12,#32
-    STMNEIA R12!,{R0-R7}
-
-    LDR R10,[R11,#4]!
-    CMP R10,#0x00000000
-    LDMNEIA R10,{R0-R7}
-    ADDEQ R12,R12,#32
-    STMNEIA R12!,{R0-R7}
-
-    LDR R10,[R11,#4]!
-    CMP R10,#0x00000000
-    LDMNEIA R10,{R0-R7}
-    ADDEQ R12,R12,#32
-    STMNEIA R12!,{R0-R7}
-
-    LDR R10,[R11,#4]!
-    CMP R10,#0x00000000
-    LDMNEIA R10,{R0-R7}
-    ADDEQ R12,R12,#32
-    STMNEIA R12!,{R0-R7}
-
-    LDR R10,[R11,#4]!
-    CMP R10,#0x00000000
-    LDMNEIA R10,{R0-R7}
-    ADDEQ R12,R12,#32
-    STMNEIA R12!,{R0-R7}
-
-    LDR R10,[R11,#4]!
-    CMP R10,#0x00000000
-    LDMNEIA R10,{R0-R7}
-    ADDEQ R12,R12,#32
-    STMNEIA R12!,{R0-R7}
-
-    LDR R10,[R11,#4]!
-    CMP R10,#0x00000000
-    LDMNEIA R10,{R0-R7}
-    ADDEQ R12,R12,#32
-    STMNEIA R12!,{R0-R7}
-
-    LDR R10,[R11,#-36]
-    ADD R11,R11,#4
-    CMP R10,#0x00000000
-    LDMNEIA R10,{R0-R7}
-    ADDEQ R12,R12,#32
-    STMNEIA R12!,{R0-R7}
-    
-    MOV PC,R14
-
-.balign 16
-display_list_offset_036:
-    LDR R10,[R11,#4]!
-    CMP R10,#0x00000000
-    LDMNEIA R10,{R0-R7}
-    ADDEQ R12,R12,#28
-    STRNE R0,[R12,#316]
-    STMNEIA R12!,{R1-R7}
-
-    LDR R10,[R11,#4]!
-    CMP R10,#0x00000000
-    LDMNEIA R10,{R0-R7}
-    ADDEQ R12,R12,#32
-    STMNEIA R12!,{R0-R7}
-
-    LDR R10,[R11,#4]!
-    CMP R10,#0x00000000
-    LDMNEIA R10,{R0-R7}
-    ADDEQ R12,R12,#32
-    STMNEIA R12!,{R0-R7}
-
-    LDR R10,[R11,#4]!
-    CMP R10,#0x00000000
-    LDMNEIA R10,{R0-R7}
-    ADDEQ R12,R12,#32
-    STMNEIA R12!,{R0-R7}
-
-    LDR R10,[R11,#4]!
-    CMP R10,#0x00000000
-    LDMNEIA R10,{R0-R7}
-    ADDEQ R12,R12,#32
-    STMNEIA R12!,{R0-R7}
-
-    LDR R10,[R11,#4]!
-    CMP R10,#0x00000000
-    LDMNEIA R10,{R0-R7}
-    ADDEQ R12,R12,#32
-    STMNEIA R12!,{R0-R7}
-
-    LDR R10,[R11,#4]!
-    CMP R10,#0x00000000
-    LDMNEIA R10,{R0-R7}
-    ADDEQ R12,R12,#32
-    STMNEIA R12!,{R0-R7}
-
-    LDR R10,[R11,#4]!
-    CMP R10,#0x00000000
-    LDMNEIA R10,{R0-R7}
-    ADDEQ R12,R12,#32
-    STMNEIA R12!,{R0-R7}
-
-    LDR R10,[R11,#4]!
-    CMP R10,#0x00000000
-    LDMNEIA R10,{R0-R7}
-    ADDEQ R12,R12,#32
-    STMNEIA R12!,{R0-R7}
-
-    LDR R10,[R11,#-36]
-    ADD R11,R11,#4
-    CMP R10,#0x00000000
-    LDMNEIA R10,{R0-R7}
-    ADDEQ R12,R12,#32
-    STMNEIA R12!,{R0-R7}
-    
-    MOV PC,R14
-
-.balign 16
-display_list_offset_040:
-    LDR R10,[R11,#4]!
-    CMP R10,#0x00000000
-    LDMNEIA R10,{R0-R7}
-    ADDEQ R12,R12,#24
-    STRNE R0,[R12,#312]
-    STRNE R1,[R12,#316]
-    STMNEIA R12!,{R2-R7}
-
-    LDR R10,[R11,#4]!
-    CMP R10,#0x00000000
-    LDMNEIA R10,{R0-R7}
-    ADDEQ R12,R12,#32
-    STMNEIA R12!,{R0-R7}
-
-    LDR R10,[R11,#4]!
-    CMP R10,#0x00000000
-    LDMNEIA R10,{R0-R7}
-    ADDEQ R12,R12,#32
-    STMNEIA R12!,{R0-R7}
-
-    LDR R10,[R11,#4]!
-    CMP R10,#0x00000000
-    LDMNEIA R10,{R0-R7}
-    ADDEQ R12,R12,#32
-    STMNEIA R12!,{R0-R7}
-
-    LDR R10,[R11,#4]!
-    CMP R10,#0x00000000
-    LDMNEIA R10,{R0-R7}
-    ADDEQ R12,R12,#32
-    STMNEIA R12!,{R0-R7}
-
-    LDR R10,[R11,#4]!
-    CMP R10,#0x00000000
-    LDMNEIA R10,{R0-R7}
-    ADDEQ R12,R12,#32
-    STMNEIA R12!,{R0-R7}
-
-    LDR R10,[R11,#4]!
-    CMP R10,#0x00000000
-    LDMNEIA R10,{R0-R7}
-    ADDEQ R12,R12,#32
-    STMNEIA R12!,{R0-R7}
-
-    LDR R10,[R11,#4]!
-    CMP R10,#0x00000000
-    LDMNEIA R10,{R0-R7}
-    ADDEQ R12,R12,#32
-    STMNEIA R12!,{R0-R7}
-
-    LDR R10,[R11,#4]!
-    CMP R10,#0x00000000
-    LDMNEIA R10,{R0-R7}
-    ADDEQ R12,R12,#32
-    STMNEIA R12!,{R0-R7}
-
-    LDR R10,[R11,#-36]
-    ADD R11,R11,#4
-    CMP R10,#0x00000000
-    LDMNEIA R10,{R0-R7}
-    ADDEQ R12,R12,#32
-    STMNEIA R12!,{R0-R7}
-    
-    MOV PC,R14
-
-.balign 16
-display_list_offset_044:
-    ADD R13,R12,#308
-    LDR R10,[R11,#4]!
-    CMP R10,#0x00000000
-    LDMNEIA R10,{R0-R7}
-    ADDEQ R12,R12,#20
-    STMNEIA R13!,{R0-R2}
-    STMNEIA R12!,{R3-R7}
-
-    LDR R10,[R11,#4]!
-    CMP R10,#0x00000000
-    LDMNEIA R10,{R0-R7}
-    ADDEQ R12,R12,#32
-    STMNEIA R12!,{R0-R7}
-
-    LDR R10,[R11,#4]!
-    CMP R10,#0x00000000
-    LDMNEIA R10,{R0-R7}
-    ADDEQ R12,R12,#32
-    STMNEIA R12!,{R0-R7}
-
-    LDR R10,[R11,#4]!
-    CMP R10,#0x00000000
-    LDMNEIA R10,{R0-R7}
-    ADDEQ R12,R12,#32
-    STMNEIA R12!,{R0-R7}
-
-    LDR R10,[R11,#4]!
-    CMP R10,#0x00000000
-    LDMNEIA R10,{R0-R7}
-    ADDEQ R12,R12,#32
-    STMNEIA R12!,{R0-R7}
-
-    LDR R10,[R11,#4]!
-    CMP R10,#0x00000000
-    LDMNEIA R10,{R0-R7}
-    ADDEQ R12,R12,#32
-    STMNEIA R12!,{R0-R7}
-
-    LDR R10,[R11,#4]!
-    CMP R10,#0x00000000
-    LDMNEIA R10,{R0-R7}
-    ADDEQ R12,R12,#32
-    STMNEIA R12!,{R0-R7}
-
-    LDR R10,[R11,#4]!
-    CMP R10,#0x00000000
-    LDMNEIA R10,{R0-R7}
-    ADDEQ R12,R12,#32
-    STMNEIA R12!,{R0-R7}
-
-    LDR R10,[R11,#4]!
-    CMP R10,#0x00000000
-    LDMNEIA R10,{R0-R7}
-    ADDEQ R12,R12,#32
-    STMNEIA R12!,{R0-R7}
-
-    LDR R10,[R11,#-36]
-    ADD R11,R11,#4
-    CMP R10,#0x00000000
-    LDMNEIA R10,{R0-R7}
-    ADDEQ R12,R12,#32
-    STMNEIA R12!,{R0-R7}
-    
-    MOV PC,R14
-
-.balign 16
-display_list_offset_048:
-    ADD R13,R12,#304
-    LDR R10,[R11,#4]!
-    CMP R10,#0x00000000
-    LDMNEIA R10,{R0-R7}
-    ADDEQ R12,R12,#16
-    STMNEIA R13!,{R0-R3}
-    STMNEIA R12!,{R4-R7}
-
-    LDR R10,[R11,#4]!
-    CMP R10,#0x00000000
-    LDMNEIA R10,{R0-R7}
-    ADDEQ R12,R12,#32
-    STMNEIA R12!,{R0-R7}
-
-    LDR R10,[R11,#4]!
-    CMP R10,#0x00000000
-    LDMNEIA R10,{R0-R7}
-    ADDEQ R12,R12,#32
-    STMNEIA R12!,{R0-R7}
-
-    LDR R10,[R11,#4]!
-    CMP R10,#0x00000000
-    LDMNEIA R10,{R0-R7}
-    ADDEQ R12,R12,#32
-    STMNEIA R12!,{R0-R7}
-
-    LDR R10,[R11,#4]!
-    CMP R10,#0x00000000
-    LDMNEIA R10,{R0-R7}
-    ADDEQ R12,R12,#32
-    STMNEIA R12!,{R0-R7}
-
-    LDR R10,[R11,#4]!
-    CMP R10,#0x00000000
-    LDMNEIA R10,{R0-R7}
-    ADDEQ R12,R12,#32
-    STMNEIA R12!,{R0-R7}
-
-    LDR R10,[R11,#4]!
-    CMP R10,#0x00000000
-    LDMNEIA R10,{R0-R7}
-    ADDEQ R12,R12,#32
-    STMNEIA R12!,{R0-R7}
-
-    LDR R10,[R11,#4]!
-    CMP R10,#0x00000000
-    LDMNEIA R10,{R0-R7}
-    ADDEQ R12,R12,#32
-    STMNEIA R12!,{R0-R7}
-
-    LDR R10,[R11,#4]!
-    CMP R10,#0x00000000
-    LDMNEIA R10,{R0-R7}
-    ADDEQ R12,R12,#32
-    STMNEIA R12!,{R0-R7}
-
-    LDR R10,[R11,#-36]
-    ADD R11,R11,#4
-    CMP R10,#0x00000000
-    LDMNEIA R10,{R0-R7}
-    ADDEQ R12,R12,#32
-    STMNEIA R12!,{R0-R7}
-    
-    MOV PC,R14
-
-.balign 16
-display_list_offset_052:
-    ADD R13,R12,#300
-    LDR R10,[R11,#4]!
-    CMP R10,#0x00000000
-    LDMNEIA R10,{R0-R7}
-    ADDEQ R12,R12,#12
-    STMNEIA R13!,{R0-R4}
-    STMNEIA R12!,{R5-R7}
-
-    LDR R10,[R11,#4]!
-    CMP R10,#0x00000000
-    LDMNEIA R10,{R0-R7}
-    ADDEQ R12,R12,#32
-    STMNEIA R12!,{R0-R7}
-
-    LDR R10,[R11,#4]!
-    CMP R10,#0x00000000
-    LDMNEIA R10,{R0-R7}
-    ADDEQ R12,R12,#32
-    STMNEIA R12!,{R0-R7}
-
-    LDR R10,[R11,#4]!
-    CMP R10,#0x00000000
-    LDMNEIA R10,{R0-R7}
-    ADDEQ R12,R12,#32
-    STMNEIA R12!,{R0-R7}
-
-    LDR R10,[R11,#4]!
-    CMP R10,#0x00000000
-    LDMNEIA R10,{R0-R7}
-    ADDEQ R12,R12,#32
-    STMNEIA R12!,{R0-R7}
-
-    LDR R10,[R11,#4]!
-    CMP R10,#0x00000000
-    LDMNEIA R10,{R0-R7}
-    ADDEQ R12,R12,#32
-    STMNEIA R12!,{R0-R7}
-
-    LDR R10,[R11,#4]!
-    CMP R10,#0x00000000
-    LDMNEIA R10,{R0-R7}
-    ADDEQ R12,R12,#32
-    STMNEIA R12!,{R0-R7}
-
-    LDR R10,[R11,#4]!
-    CMP R10,#0x00000000
-    LDMNEIA R10,{R0-R7}
-    ADDEQ R12,R12,#32
-    STMNEIA R12!,{R0-R7}
-
-    LDR R10,[R11,#4]!
-    CMP R10,#0x00000000
-    LDMNEIA R10,{R0-R7}
-    ADDEQ R12,R12,#32
-    STMNEIA R12!,{R0-R7}
-
-    LDR R10,[R11,#-36]
-    ADD R11,R11,#4
-    CMP R10,#0x00000000
-    LDMNEIA R10,{R0-R7}
-    ADDEQ R12,R12,#32
-    STMNEIA R12!,{R0-R7}
-    
-    MOV PC,R14
-
-.balign 16
-display_list_offset_056:
-    ADD R13,R12,#296
-    LDR R10,[R11,#4]!
-    CMP R10,#0x00000000
-    LDMNEIA R10,{R0-R7}
-    ADDEQ R12,R12,#8
-    STMNEIA R13!,{R0-R5}
-    STMNEIA R12!,{R6-R7}
-
-    LDR R10,[R11,#4]!
-    CMP R10,#0x00000000
-    LDMNEIA R10,{R0-R7}
-    ADDEQ R12,R12,#32
-    STMNEIA R12!,{R0-R7}
-
-    LDR R10,[R11,#4]!
-    CMP R10,#0x00000000
-    LDMNEIA R10,{R0-R7}
-    ADDEQ R12,R12,#32
-    STMNEIA R12!,{R0-R7}
-
-    LDR R10,[R11,#4]!
-    CMP R10,#0x00000000
-    LDMNEIA R10,{R0-R7}
-    ADDEQ R12,R12,#32
-    STMNEIA R12!,{R0-R7}
-
-    LDR R10,[R11,#4]!
-    CMP R10,#0x00000000
-    LDMNEIA R10,{R0-R7}
-    ADDEQ R12,R12,#32
-    STMNEIA R12!,{R0-R7}
-
-    LDR R10,[R11,#4]!
-    CMP R10,#0x00000000
-    LDMNEIA R10,{R0-R7}
-    ADDEQ R12,R12,#32
-    STMNEIA R12!,{R0-R7}
-
-    LDR R10,[R11,#4]!
-    CMP R10,#0x00000000
-    LDMNEIA R10,{R0-R7}
-    ADDEQ R12,R12,#32
-    STMNEIA R12!,{R0-R7}
-
-    LDR R10,[R11,#4]!
-    CMP R10,#0x00000000
-    LDMNEIA R10,{R0-R7}
-    ADDEQ R12,R12,#32
-    STMNEIA R12!,{R0-R7}
-
-    LDR R10,[R11,#4]!
-    CMP R10,#0x00000000
-    LDMNEIA R10,{R0-R7}
-    ADDEQ R12,R12,#32
-    STMNEIA R12!,{R0-R7}
-
-    LDR R10,[R11,#-36]
-    ADD R11,R11,#4
-    CMP R10,#0x00000000
-    LDMNEIA R10,{R0-R7}
-    ADDEQ R12,R12,#32
-    STMNEIA R12!,{R0-R7}
-    
-    MOV PC,R14
-
-.balign 16
-display_list_offset_060:
-    ADD R13,R12,#292
-    LDR R10,[R11,#4]!
-    CMP R10,#0x00000000
-    LDMNEIA R10,{R0-R7}
-    ADDEQ R12,R12,#4
-    STMNEIA R13!,{R0-R6}
-    STRNE R7,[R12],#4
-
-    LDR R10,[R11,#4]!
-    CMP R10,#0x00000000
-    LDMNEIA R10,{R0-R7}
-    ADDEQ R12,R12,#32
-    STMNEIA R12!,{R0-R7}
-
-    LDR R10,[R11,#4]!
-    CMP R10,#0x00000000
-    LDMNEIA R10,{R0-R7}
-    ADDEQ R12,R12,#32
-    STMNEIA R12!,{R0-R7}
-
-    LDR R10,[R11,#4]!
-    CMP R10,#0x00000000
-    LDMNEIA R10,{R0-R7}
-    ADDEQ R12,R12,#32
-    STMNEIA R12!,{R0-R7}
-
-    LDR R10,[R11,#4]!
-    CMP R10,#0x00000000
-    LDMNEIA R10,{R0-R7}
-    ADDEQ R12,R12,#32
-    STMNEIA R12!,{R0-R7}
-
-    LDR R10,[R11,#4]!
-    CMP R10,#0x00000000
-    LDMNEIA R10,{R0-R7}
-    ADDEQ R12,R12,#32
-    STMNEIA R12!,{R0-R7}
-
-    LDR R10,[R11,#4]!
-    CMP R10,#0x00000000
-    LDMNEIA R10,{R0-R7}
-    ADDEQ R12,R12,#32
-    STMNEIA R12!,{R0-R7}
-
-    LDR R10,[R11,#4]!
-    CMP R10,#0x00000000
-    LDMNEIA R10,{R0-R7}
-    ADDEQ R12,R12,#32
-    STMNEIA R12!,{R0-R7}
-
-    LDR R10,[R11,#4]!
-    CMP R10,#0x00000000
-    LDMNEIA R10,{R0-R7}
-    ADDEQ R12,R12,#32
-    STMNEIA R12!,{R0-R7}
-
-    LDR R10,[R11,#-36]
-    ADD R11,R11,#4
-    CMP R10,#0x00000000
-    LDMNEIA R10,{R0-R7}
-    ADDEQ R12,R12,#32
-    STMNEIA R12!,{R0-R7}
-    
-    MOV PC,R14
-
-.balign 16
 display_list_offset_list:
     MOV R0,#display_list_offset_000
+    ; MOV R0,#display_list_offset_000
+    ; MOV R0,#display_list_offset_000
+    ; MOV R0,#display_list_offset_000
     MOV R0,#display_list_offset_001
     MOV R0,#display_list_offset_002
     MOV R0,#display_list_offset_003
     MOV R0,#display_list_offset_004
-    MOV R0,#display_list_offset_001
-    MOV R0,#display_list_offset_002
-    MOV R0,#display_list_offset_003
+    MOV R0,#display_list_offset_004
+    MOV R0,#display_list_offset_004
+    MOV R0,#display_list_offset_004
+    ;MOV R0,#display_list_offset_001
+    ;MOV R0,#display_list_offset_002
+    ;MOV R0,#display_list_offset_003
     MOV R0,#display_list_offset_008
-    MOV R0,#display_list_offset_001
-    MOV R0,#display_list_offset_002
-    MOV R0,#display_list_offset_003
+    MOV R0,#display_list_offset_008
+    MOV R0,#display_list_offset_008
+    MOV R0,#display_list_offset_008
+    ;MOV R0,#display_list_offset_001
+    ;MOV R0,#display_list_offset_002
+    ;MOV R0,#display_list_offset_003
     MOV R0,#display_list_offset_012
-    MOV R0,#display_list_offset_001
-    MOV R0,#display_list_offset_002
-    MOV R0,#display_list_offset_003
+    MOV R0,#display_list_offset_012
+    MOV R0,#display_list_offset_012
+    MOV R0,#display_list_offset_012
+    ;MOV R0,#display_list_offset_001
+    ;MOV R0,#display_list_offset_002
+    ;MOV R0,#display_list_offset_003
     MOV R0,#display_list_offset_016
-    MOV R0,#display_list_offset_001
-    MOV R0,#display_list_offset_002
-    MOV R0,#display_list_offset_003
+    MOV R0,#display_list_offset_016
+    MOV R0,#display_list_offset_016
+    MOV R0,#display_list_offset_016
+    ;MOV R0,#display_list_offset_001
+    ;MOV R0,#display_list_offset_002
+    ;MOV R0,#display_list_offset_003
     MOV R0,#display_list_offset_020
-    MOV R0,#display_list_offset_001
-    MOV R0,#display_list_offset_002
-    MOV R0,#display_list_offset_003
+    MOV R0,#display_list_offset_020
+    MOV R0,#display_list_offset_020
+    MOV R0,#display_list_offset_020
+    ;MOV R0,#display_list_offset_001
+    ;MOV R0,#display_list_offset_002
+    ;MOV R0,#display_list_offset_003
     MOV R0,#display_list_offset_024
-    MOV R0,#display_list_offset_001
-    MOV R0,#display_list_offset_002
-    MOV R0,#display_list_offset_003
+    MOV R0,#display_list_offset_024
+    MOV R0,#display_list_offset_024
+    MOV R0,#display_list_offset_024
+    ;MOV R0,#display_list_offset_001
+    ;MOV R0,#display_list_offset_002
+    ;MOV R0,#display_list_offset_003
     MOV R0,#display_list_offset_028
-    MOV R0,#display_list_offset_001
-    MOV R0,#display_list_offset_002
-    MOV R0,#display_list_offset_003
-    MOV R0,#display_list_offset_032
-    MOV R0,#display_list_offset_001
-    MOV R0,#display_list_offset_002
-    MOV R0,#display_list_offset_003
-    MOV R0,#display_list_offset_036
-    MOV R0,#display_list_offset_001
-    MOV R0,#display_list_offset_002
-    MOV R0,#display_list_offset_003
-    MOV R0,#display_list_offset_040
-    MOV R0,#display_list_offset_001
-    MOV R0,#display_list_offset_002
-    MOV R0,#display_list_offset_003
-    MOV R0,#display_list_offset_044
-    MOV R0,#display_list_offset_001
-    MOV R0,#display_list_offset_002
-    MOV R0,#display_list_offset_003
-    MOV R0,#display_list_offset_048
-    MOV R0,#display_list_offset_001
-    MOV R0,#display_list_offset_002
-    MOV R0,#display_list_offset_003
-    MOV R0,#display_list_offset_052
-    MOV R0,#display_list_offset_001
-    MOV R0,#display_list_offset_002
-    MOV R0,#display_list_offset_003
-    MOV R0,#display_list_offset_056
-    MOV R0,#display_list_offset_001
-    MOV R0,#display_list_offset_002
-    MOV R0,#display_list_offset_003
-    MOV R0,#display_list_offset_060
-    MOV R0,#display_list_offset_001
-    MOV R0,#display_list_offset_002
-    MOV R0,#display_list_offset_003
-
+    MOV R0,#display_list_offset_028
+    MOV R0,#display_list_offset_028
+    MOV R0,#display_list_offset_028
+    ;MOV R0,#display_list_offset_001
+    ;MOV R0,#display_list_offset_002
+    ;MOV R0,#display_list_offset_003
+    
 .balign 16
 vdu_variables_screen_start:
     .4byte 0x00000095       ; display memory start address

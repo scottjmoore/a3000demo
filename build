@@ -8,3 +8,4 @@
 ./scripts/png2asm.py -i assets/font/a.png -o include/a.inc -sw 16 -sh 16
 
 vasmarm_std demo.asm -a2 -m2 -opt-ldrpc -opt-adr -chklabels -nocase -L demo.lst -Fbin -o ~/Workspace/github.com/scottjmoore/arculator/hostfs/Demo/demo,ff8
+vasmarm_std compiledspritedemo.asm -a2 -m2 -opt-ldrpc -opt-adr -chklabels -nocase -L demo.lst -Fbin -o ~/Workspace/github.com/scottjmoore/arculator/hostfs/Demo/compiledspritedemo,ff8
