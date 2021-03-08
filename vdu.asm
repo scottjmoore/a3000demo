@@ -1,11 +1,13 @@
 #include "swi.asm"
 
 ; VDU function values
-.set VDU_TextColour,17
-.set VDU_Palette,19
-.set VDU_DefaultColours,20
-.set VDU_Mode,22
-.set VDU_Misc,23
+.set VDU_ClearTextViewport,12
+.set VDU_DefineTextColour,17
+.set VDU_DefineGraphicsColour,18
+.set VDU_DefineLogicalColour,19
+.set VDU_RestoreDefaultLogicalColours,20
+.set VDU_SelectScreenMode,22
+.set VDU_MultiPurpose,23
 
 ; VDU macro, can accept upto 10 parameters
 .macro VDU v1,v2,v3,v4,v5,v6,v7,v8,v9,v10

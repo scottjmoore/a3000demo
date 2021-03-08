@@ -4,4 +4,5 @@
 .set OS_NewLine,0x03
 .set OS_Byte,0x06
 .set OS_Exit,0x11
+.set OS_Mouse,0x1c
 .set OS_ReadVduVariables,0x31

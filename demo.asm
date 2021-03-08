@@ -21,8 +21,8 @@
 main:
     ;ADRL SP,stack       ; load stack pointer with our stack address
 
-    VDU VDU_Mode,13,-1,-1,-1,-1,-1,-1,-1,-1     ; change to mode 13 (320x256 256 colours) for A3000
-    VDU VDU_Misc,1,0,0,0,0,0,0,0,0,0
+    VDU VDU_SelectScreenMode,13,-1,-1,-1,-1,-1,-1,-1,-1     ; change to mode 13 (320x256 256 colours) for A3000
+    VDU VDU_MultiPurpose,1,0,0,0,0,0,0,0,0,0
     ADRL R0,vdu_variables_screen_start
     ADRL R1,buffer
     SWI OS_ReadVduVariables
