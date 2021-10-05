@@ -14,13 +14,14 @@ $(INC16): $(PNG16)
 
 compiledspritedemo:	compiledspritedemo.asm
 	vasmarm_std compiledspritedemo.asm -a2 -m2 -opt-ldrpc -opt-adr -chklabels -nocase -L compiledspritedemo.lst -Fbin -o compiledspritedemo
-	@mkdir ../arculator/hostfs/Demo > /dev/null 2>&1 || true
-	cp compiledspritedemo ../arculator/hostfs/Demo/compiledspritedemo,ff8
+	@mkdir ../arculator/hostfs/!Demo > /dev/null 2>&1 || true
+	cp compiledspritedemo ../arculator/hostfs/!Demo/compiledspritedemo,ff8
 
 demo:	demo.asm include/grey.inc include/blue.inc include/redball.inc include/greenball.inc include/blueball.inc include/a.inc
 	vasmarm_std demo.asm -a2 -m2 -opt-ldrpc -opt-adr -L demo.lst -Fbin -o demo
-	@mkdir ../arculator/hostfs/Demo > /dev/null 2>&1 || true
-	cp demo ../arculator/hostfs/Demo/demo,ff8
+	@mkdir ../arculator/hostfs/!Demo > /dev/null 2>&1 || true
+	cp demo ../arculator/hostfs/!Demo/demo,ff8
+	cp !Run ../arculator/hostfs/!Demo/!Run,feb
 
 #include/redball.inc:
 #	./scripts/png2asm.py -i assets/redball.png -o include/redball.inc -sw 16 -sh 16
