@@ -19,7 +19,7 @@ clean:
 	-@rm -f demo
 	-@rm -f *.lst
 	-@rm -f include/*.inc
-	-@rm -rf ../arculator/hostfs/Demo
+	-@rm -rf ../arculator/hostfs/!Demo
 
 deploy:
 	make demo
