@@ -35,8 +35,8 @@ run-arculator-a3000:
 
 run-arculator-a3010:
 	-@make deploy
-	cd $(ARCULATOR)/; ./arculator A3010
+	-@cd $(ARCULATOR)/; ./arculator A3010
 
 run-arculator-a5000:
 	-@make deploy
-	cd $(ARCULATOR)/; ./arculator A5000
+	-@cd $(ARCULATOR)/; ./arculator A5000
