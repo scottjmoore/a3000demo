@@ -4,7 +4,7 @@ INC32	= include/grey.inc include/blue.inc include/alien_tl.inc include/alien_tr.
 PNG16	= assets/redball.png assets/greenball.png assets/blueball.png assets/font/a.png assets/font/b.png assets/ship.png
 INC16	= include/redball.inc include/greenball.inc include/blueball.inc include/a.inc  include/b.inc include/ship.inc
 
-all: demo
+all: !Demo/!RunImage,ff8
 
 $(INC32): $(PNG32)
 	./scripts/png2asm.py -i $(PNG32) -o $(INC32) -sw 32 -sh 32 -ss
@@ -12,8 +12,8 @@ $(INC32): $(PNG32)
 $(INC16): $(PNG16)
 	./scripts/png2asm.py -i $(PNG16) -o $(INC16) -sw 16 -sh 16
 
-demo:	demo.asm include/grey.inc include/blue.inc include/redball.inc include/greenball.inc include/blueball.inc include/a.inc
-	vasmarm_std demo.asm -a2 -m2 -opt-ldrpc -opt-adr -L demo.lst -Fbin -o demo
+!Demo/!RunImage,ff8:	demo.asm include/grey.inc include/blue.inc include/redball.inc include/greenball.inc include/blueball.inc include/a.inc
+	vasmarm_std demo.asm -a2 -m2 -opt-ldrpc -opt-adr -L demo.lst -Fbin -o !Demo/!RunImage,ff8
 
 clean:
 	-@rm -f demo
@@ -22,7 +22,5 @@ clean:
 	-@rm -rf ../../sarah-walker-pcem/arculator/hostfs/!Demo
 
 deploy:
-	make demo
-	@mkdir ../../sarah-walker-pcem/arculator/hostfs/!Demo > /dev/null 2>&1 || true
-	cp demo ../../sarah-walker-pcem/arculator/hostfs/!Demo/demo,ff8
-	cp !Run ../../sarah-walker-pcem/arculator/hostfs/!Demo/!Run,feb
+	-@make
+	-@cp -r !Demo ../../sarah-walker-pcem/arculator/hostfs/
