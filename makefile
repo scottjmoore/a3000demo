@@ -19,10 +19,10 @@ clean:
 	-@rm -f demo
 	-@rm -f *.lst
 	-@rm -f include/*.inc
-	-@rm -rf ../arculator/hostfs/!Demo
+	-@rm -rf ../../sarah-walker-pcem/arculator/hostfs/!Demo
 
 deploy:
 	make demo
-	@mkdir ../arculator/hostfs/!Demo > /dev/null 2>&1 || true
-	cp demo ../arculator/hostfs/!Demo/demo,ff8
-	cp !Run ../arculator/hostfs/!Demo/!Run,feb
+	@mkdir ../../sarah-walker-pcem/arculator/hostfs/!Demo > /dev/null 2>&1 || true
+	cp demo ../../sarah-walker-pcem/arculator/hostfs/!Demo/demo,ff8
+	cp !Run ../../sarah-walker-pcem/arculator/hostfs/!Demo/!Run,feb
